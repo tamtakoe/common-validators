@@ -1,2 +1,195 @@
 # common-validators
 Library with common validators
+
+[![NPM version](https://img.shields.io/npm/v/common-validators.svg)](https://npmjs.org/package/common-validators)
+[![Build status](https://img.shields.io/travis/tamtakoe/common-validators.svg)](https://travis-ci.org/tamtakoe/common-validators)
+
+**Note:** This module works in browsers and Node.js >= 4.0
+
+## Installation
+
+```sh
+npm install common-validators
+```
+
+## Usage
+
+```js
+const validators = require('common-validators');
+
+validators.maxLength('abc', 2);
+/* returns:
+{
+    message: 'is too long (maximum is 2)',
+    error: 'maxLength',
+    comparedValue: 2
+}
+*/
+
+validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'is too many'});
+/* returns (except options which end in `Message`):
+{
+    type: 'many',
+    message: 'is too many',
+    error: 'range',
+    from: 1,
+    to: 5
+}
+*/
+```
+
+## API
+
+### Validators.add, Validators.load
+
+Use this methods for adding custom validators in simple format.
+See more in [validators-constructor documentation](https://www.npmjs.com/package/validators-constructor).
+Also you can use `Object.assign(commonValidators, customValidators)` in other situations
+
+
+### Validators.validatorName(value, options)
+
+**value** (Any) - Validated value
+
+**options** (Any) - If is not Object you get option value in validator as `options.comparedValue`
+
+**return** (Any) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
+
+
+### Validators:
+
+**custom** - uses custom validator from options
+* `validate` (Function) - Custom function which get `value` and `options` and return result of validation
+
+**required | presence | empty** - validates that the value isn't empty.
+
+
+#### *Types*
+
+**object** - value is plain object
+
+**array** - value is array
+
+**number** - value is number
+
+**integer** - value is integer
+
+**string** - value is string
+
+**date** - value is date
+
+**boolean** - value is boolean
+
+**null** - value is null
+
+
+#### *Equality (valid if value is empty)*
+
+**equal** - value is equal to specified value (deep equal for objects)
+* `comparedValue` (Boolean) - specified value
+* `strict` (Boolean) - Use strict comparison (===). `true` by default
+
+
+#### *Numbers* (valid if value is not number or empty)
+
+**max** - value is less then maximum
+* `comparedValue` (Number) - maximum
+
+**min** - value is more then minimum
+* `comparedValue` (Number) - minimum
+
+**range** - value is in the range from minimum to maximum (including)
+* `from` (Number) - minimum
+* `to` (Number) - maximum
+
+**odd** - value is odd
+
+**even** - value is even
+
+**divisible** - value is divided by the divisor without a remainder
+* `comparedValue` (Number) - divisor
+
+
+#### *Length* (valid if value is not string or not array or empty)
+
+**maxLength** - value's length is less then maximum
+* `comparedValue` (Number) - maximum
+
+**minLength** - value's length is more then minimum
+* `comparedValue` (Number) - minimum
+
+**rangeLength** - value's length is in the range from minimum to maximum (including)
+* `from` (Number) - minimum
+* `to` (Number) - maximum
+
+**equalLength** - value's length is equal to specified value
+* `comparedValue` (Number) - divisor
+
+
+#### *RegExp* (valid if value is not string or empty)
+
+**pattern | format** - value matches the pattern
+* `comparedValue` (String|RegExp) - pattern
+
+
+#### *White and black list* (valid if value is empty)
+
+**inclusion** - value is contained in white list. If value is an array or object - every item must to be in the list.
+* `comparedValue` (Array|Object) - white list
+
+```js
+inclusion('a', ['a', 'b', 'c']); //valid
+inclusion('a', {a, 'smth'}); //valid
+inclusion(['a', 'b'], ['a', 'b', 'c']); //valid
+inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
+```
+**exclusion** - value is not contained in black list. If value is an array or object - neither item must to be in the list.
+* `comparedValue` (Array|Object) - black list
+
+
+#### *Date and time* (valid if value is not valid date)
+
+**maxDateTime** - value is less then maximum date
+* `comparedValue` (Date|String|Number) - maximum date
+
+**minDateTime** - value is more then minimum date
+* `comparedValue` (Date|String|Number) - minimum date
+
+**rangeDateTime** - value is in the range from minimum to maximum dates (including)
+* `from` (Date|String|Number) - minimum date
+* `to` (Date|String|Number) - maximum date
+
+**equalDateTime** - value is equal specified date
+* `comparedValue` (Date|String|Number) - specified date
+
+**maxDate** - value is less then maximum date (time is ignored)
+* `comparedValue` (Date|String|Number) - maximum date
+
+**minDate** - value is more then minimum date (time is ignored)
+* `comparedValue` (Date|String|Number) - minimum date
+
+**rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
+* `from` (Date|String|Number) - minimum date
+* `to` (Date|String|Number) - maximum date
+
+**equalDate** - value is equal specified date (time is ignored)
+* `comparedValue` (Date|String|Number) - specified date
+
+
+#### *Web* (valid if value is not string or empty)
+
+**email** - value is email address
+
+**url** - value is URL
+
+
+## Tests
+
+```sh
+npm install
+npm test
+```
+
+## License
+
+[MIT](LICENSE)
