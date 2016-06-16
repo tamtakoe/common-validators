@@ -179,16 +179,26 @@ validators.load({
     },
 
     //Isn't empty
-    required: function(value) {
+    empty: function(value) {
         if (isEmpty(value)) {
             return "can't be blank";
         }
     },
-    presence: 'required',
-    empty: 'required',
+    presence: 'empty',
+    required: 'empty',
 
     //Equality
     equal: function(value, comparedValue, options) {
+        // var errorEmpty = this.empty(value);
+        //
+        // if (options.allowEmpty && errorEmpty) {
+        //     return errorEmpty;
+        // }
+        //
+        // if (!errorEmpty && !deepEqual(value, comparedValue, options.strict)) {
+        //     return 'must be equal %{comparedValue}';
+        // }
+
         if (!isEmpty(value) && !deepEqual(value, comparedValue, options.strict)) {
             return 'must be equal %{comparedValue}';
         }
@@ -245,6 +255,21 @@ validators.load({
 
     //Number
     max: function(value, comparedValue, options) {
+        // var errorEmpty = this.empty(value);
+        // var errorType = this.number(value);
+        //
+        // if (!options.allowEmpty && errorEmpty) {
+        //     return errorEmpty;
+        // }
+        //
+        // if (!options.allowIncorrectType && errorType) {
+        //     return errorType;
+        // }
+        //
+        // if (!errorType && !errorEmpty && value > comparedValue) {
+        //     return 'is too large (maximum is %{comparedValue})';
+        // }
+
         if (isNumber(value) && !isEmpty(value) && value > comparedValue) {
             return 'is too large (maximum is %{comparedValue})';
         }

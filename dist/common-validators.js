@@ -181,16 +181,26 @@ validators.load({
     },
 
     //Isn't empty
-    required: function required(value) {
+    empty: function empty(value) {
         if (isEmpty(value)) {
             return "can't be blank";
         }
     },
-    presence: 'required',
-    empty: 'required',
+    presence: 'empty',
+    required: 'empty',
 
     //Equality
     equal: function equal(value, comparedValue, options) {
+        // var errorEmpty = this.empty(value);
+        //
+        // if (options.allowEmpty && errorEmpty) {
+        //     return errorEmpty;
+        // }
+        //
+        // if (!errorEmpty && !deepEqual(value, comparedValue, options.strict)) {
+        //     return 'must be equal %{comparedValue}';
+        // }
+
         if (!isEmpty(value) && !deepEqual(value, comparedValue, options.strict)) {
             return 'must be equal %{comparedValue}';
         }
@@ -247,6 +257,21 @@ validators.load({
 
     //Number
     max: function max(value, comparedValue, options) {
+        // var errorEmpty = this.empty(value);
+        // var errorType = this.number(value);
+        //
+        // if (!options.allowEmpty && errorEmpty) {
+        //     return errorEmpty;
+        // }
+        //
+        // if (!options.allowIncorrectType && errorType) {
+        //     return errorType;
+        // }
+        //
+        // if (!errorType && !errorEmpty && value > comparedValue) {
+        //     return 'is too large (maximum is %{comparedValue})';
+        // }
+
         if (isNumber(value) && !isEmpty(value) && value > comparedValue) {
             return 'is too large (maximum is %{comparedValue})';
         }
@@ -644,7 +669,7 @@ Validators.prototype.add = function (name, validator) {
                 value = options.parse(value);
             }
 
-            var error = noComparedValue ? validator(value, options) : validator(value, comparedValue, options);
+            var error = noComparedValue ? validator.call(_this2, value, options) : validator.call(_this2, value, comparedValue, options);
 
             if (error) {
                 var _ret2 = function () {
