@@ -99,8 +99,10 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 - **max** - value is less then maximum
   * `comparedValue` (`Number`) - maximum
 
+
 - **min** - value is more then minimum
   * `comparedValue` (`Number`) - minimum
+
 
 - **range** - value is in the range from minimum to maximum (including)
   * `from` (`Number`) - minimum
