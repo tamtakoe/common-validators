@@ -188,8 +188,8 @@ validators.load({
     empty: 'required',
 
     //Equality
-    equal: function(value, options) {
-        if (!isEmpty(value) && !deepEqual(value, options.comparedValue, options.strict)) {
+    equal: function(value, comparedValue, options) {
+        if (!isEmpty(value) && !deepEqual(value, comparedValue, options.strict)) {
             return 'must be equal %{comparedValue}';
         }
     },
@@ -244,14 +244,14 @@ validators.load({
     },
 
     //Number
-    max: function(value, options) {
-        if (isNumber(value) && !isEmpty(value) && value > options.comparedValue) {
+    max: function(value, comparedValue, options) {
+        if (isNumber(value) && !isEmpty(value) && value > comparedValue) {
             return 'is too large (maximum is %{comparedValue})';
         }
     },
 
-    min: function(value, options) {
-        if (isNumber(value) && !isEmpty(value) && value < options.comparedValue) {
+    min: function(value, comparedValue, options) {
+        if (isNumber(value) && !isEmpty(value) && value < comparedValue) {
             return 'is too short (minimum is %{comparedValue})';
         }
     },
@@ -285,27 +285,27 @@ validators.load({
         }
     },
 
-    divisible: function(value, options) {
-        if (isNumber(value) && !isEmpty(value) && value % options.comparedValue !== 0) {
+    divisible: function(value, comparedValue, options) {
+        if (isNumber(value) && !isEmpty(value) && value % comparedValue !== 0) {
             return 'must be divisible by %{comparedValue}';
         }
     },
 
     //Length
-    maxLength: function(value, options) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > options.comparedValue) {
+    maxLength: function(value, comparedValue, options) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > comparedValue) {
             return 'is too long (maximum is %{comparedValue})';
         }
     },
 
-    minLength: function(value, options) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < options.comparedValue) {
+    minLength: function(value, comparedValue, options) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < comparedValue) {
             return 'is too short (minimum is %{comparedValue})';
         }
     },
 
-    equalLength: function(value, options) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === options.comparedValue) {
+    equalLength: function(value, comparedValue, options) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === comparedValue) {
             return 'has an incorrect length (must be equal %{comparedValue})';
         }
     },
@@ -329,31 +329,31 @@ validators.load({
     },
 
     //RegExp
-    pattern: function(value, options) {
-        if (isString(value) && !isEmpty(value) && !(new RegExp(options.comparedValue)).test(value)) {
+    pattern: function(value, comparedValue, options) {
+        if (isString(value) && !isEmpty(value) && !(new RegExp(comparedValue)).test(value)) {
             return 'does not match the pattern %{comparedValue}';
         }
     },
     format: 'pattern',
 
     //White and black list
-    inclusion: function(value, options) {
-        if (!isEmpty(value) && !contains(options.comparedValue, value)) {
+    inclusion: function(value, comparedValue, options) {
+        if (!isEmpty(value) && !contains(comparedValue, value)) {
             return '%{value} is not allowed';
         }
     },
 
-    exclusion: function(value, options) {
-        if (!isEmpty(value) && contains(options.comparedValue, value, true)) {
+    exclusion: function(value, comparedValue, options) {
+        if (!isEmpty(value) && contains(comparedValue, value, true)) {
             return '%{value} is restricted';
         }
     },
 
     //Date and time
-    maxDateTime: function(value, options) {
+    maxDateTime: function(value, comparedValue, options) {
         if (isDateTime(value)) {
             const dateTime = new Date(value);
-            const comparedDateTime = new Date(options.comparedValue);
+            const comparedDateTime = new Date(comparedValue);
 
             if (dateTime > comparedDateTime) {
                 return 'must be earlier than %{comparedValue}';
@@ -361,10 +361,10 @@ validators.load({
         }
     },
 
-    maxDate: function(value, options) {
+    maxDate: function(value, comparedValue, options) {
         if (isDateTime(value)) {
             const dateTime = new Date(value);
-            const comparedDateTime = new Date(options.comparedValue);
+            const comparedDateTime = new Date(comparedValue);
             const date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date > comparedDateTime) {
@@ -373,10 +373,10 @@ validators.load({
         }
     },
 
-    minDateTime: function(value, options) {
+    minDateTime: function(value, comparedValue, options) {
         if (isDateTime(value)) {
             const dateTime = new Date(value);
-            const comparedDateTime = new Date(options.comparedValue);
+            const comparedDateTime = new Date(comparedValue);
 
             if (dateTime < comparedDateTime) {
                 return 'must be no earlier than %{comparedValue}';
@@ -384,10 +384,10 @@ validators.load({
         }
     },
 
-    minDate: function(value, options) {
+    minDate: function(value, comparedValue, options) {
         if (isDateTime(value)) {
             const dateTime = new Date(value);
-            const comparedDateTime = new Date(options.comparedValue);
+            const comparedDateTime = new Date(comparedValue);
             const date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date < comparedDateTime) {
@@ -396,10 +396,10 @@ validators.load({
         }
     },
 
-    equalDateTime: function(value, options) {
+    equalDateTime: function(value, comparedValue, options) {
         if (isDateTime(value)) {
             const dateTime = new Date(value);
-            const comparedDateTime = new Date(options.comparedValue);
+            const comparedDateTime = new Date(comparedValue);
 
             if (dateTime === comparedDateTime) {
                 return 'must be equal %{comparedValue}';
@@ -407,10 +407,10 @@ validators.load({
         }
     },
 
-    equalDate: function(value, options) {
+    equalDate: function(value, comparedValue, options) {
         if (isDateTime(value)) {
             const dateTime = new Date(value);
-            const comparedDateTime = new Date(options.comparedValue);
+            const comparedDateTime = new Date(comparedValue);
             const date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date === comparedDateTime) {

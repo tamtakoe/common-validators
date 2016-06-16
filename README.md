@@ -17,7 +17,7 @@ npm install common-validators
 ```js
 const validators = require('common-validators');
 
-validators.maxLength('abc', 2);
+validators.maxLength('abc', 2); //or validators.maxLength('abc', {comparedValue: 2})
 /* returns:
 {
     message: 'is too long (maximum is 2)',
@@ -47,95 +47,99 @@ See more in [validators-constructor documentation](https://www.npmjs.com/package
 Also you can use `Object.assign(commonValidators, customValidators)` in other situations
 
 
-### Validators.validatorName(value, options)
+### Validators.validatorName(value, [comparedValue], [options])
 
-**value** (Any) - Validated value
+- **value** (`Any`) - Validated value
 
-**options** (Any) - If is not Object you get option value in validator as `options.comparedValue`
+- **comparedValue** (`Any`) - value for comparison. User can set it as `options.comparedValue`
 
-**return** (Any) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
+- **options** (`Object`) - options
+  * `comparedValue` (`Any`) - Will be set if comparedValue is specified
+  * `parse` (`Function`) - Can change input value before validation
+  * (`Any`) - Any custom options
 
+- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
 
 ### Validators:
 
-**custom** - uses custom validator from options
-* `validate` (Function) - Custom function which get `value` and `options` and return result of validation
+- **custom** - uses custom validator from options (don't use `comparedValue`)
+  `validate` (`Function`) - Custom function which get `value` and `options` and return result of validation
 
-**required | presence | empty** - validates that the value isn't empty.
-
-
-#### *Types*
-
-**object** - value is plain object
-
-**array** - value is array
-
-**number** - value is number
-
-**integer** - value is integer
-
-**string** - value is string
-
-**date** - value is date
-
-**boolean** - value is boolean
-
-**null** - value is null
+- **required | presence | empty** - validates that the value isn't empty.
 
 
-#### *Equality (valid if value is empty)*
+*Types*
 
-**equal** - value is equal to specified value (deep equal for objects)
-* `comparedValue` (Boolean) - specified value
-* `strict` (Boolean) - Use strict comparison (===). `true` by default
+- **object** - value is plain object
 
+- **array** - value is array
 
-#### *Numbers* (valid if value is not number or empty)
+- **number** - value is number
 
-**max** - value is less then maximum
-* `comparedValue` (Number) - maximum
+- **integer** - value is integer
 
-**min** - value is more then minimum
-* `comparedValue` (Number) - minimum
+- **string** - value is string
 
-**range** - value is in the range from minimum to maximum (including)
-* `from` (Number) - minimum
-* `to` (Number) - maximum
+- **date** - value is date
 
-**odd** - value is odd
+- **boolean** - value is boolean
 
-**even** - value is even
-
-**divisible** - value is divided by the divisor without a remainder
-* `comparedValue` (Number) - divisor
+- **null** - value is null
 
 
-#### *Length* (valid if value is not string or not array or empty)
+*Equality (valid if value is empty)*
 
-**maxLength** - value's length is less then maximum
-* `comparedValue` (Number) - maximum
-
-**minLength** - value's length is more then minimum
-* `comparedValue` (Number) - minimum
-
-**rangeLength** - value's length is in the range from minimum to maximum (including)
-* `from` (Number) - minimum
-* `to` (Number) - maximum
-
-**equalLength** - value's length is equal to specified value
-* `comparedValue` (Number) - divisor
+- **equal** - value is equal to specified value (deep equal for objects)
+  `comparedValue` (`Boolean`) - specified value
+  `strict` (`Boolean`) - Use strict comparison (===). `true` by default
 
 
-#### *RegExp* (valid if value is not string or empty)
+*Numbers* (valid if value is not number or empty)
 
-**pattern | format** - value matches the pattern
-* `comparedValue` (String|RegExp) - pattern
+- **max** - value is less then maximum
+  `comparedValue` (`Number`) - maximum
+
+- **min** - value is more then minimum
+  `comparedValue` (`Number`) - minimum
+
+- **range** - value is in the range from minimum to maximum (including)
+  `from` (`Number`) - minimum
+  `to` (`Number`) - maximum
+
+- **odd** - value is odd
+
+- **even** - value is even
+
+- **divisible** - value is divided by the divisor without a remainder
+  `comparedValue` (`Number`) - divisor
 
 
-#### *White and black list* (valid if value is empty)
+*Length* (valid if value is not string or not array or empty)
 
-**inclusion** - value is contained in white list. If value is an array or object - every item must to be in the list.
-* `comparedValue` (Array|Object) - white list
+- **maxLength** - value's length is less then maximum
+  `comparedValue` (`Number`) - maximum
+
+- **minLength** - value's length is more then minimum
+  `comparedValue` (`Number`) - minimum
+
+- **rangeLength** - value's length is in the range from minimum to maximum (including)
+  `from` (`Number`) - minimum
+  `to` (`Number`) - maximum
+
+- **equalLength** - value's length is equal to specified value
+  `comparedValue` (`Number`) - divisor
+
+
+*RegExp* (valid if value is not string or empty)
+
+- **pattern | format** - value matches the pattern
+  `comparedValue` (`String` or `RegExp`) - pattern
+
+
+*White and black list* (valid if value is empty)
+
+- **inclusion** - value is contained in white list. If value is an array or object - every item must to be in the list.
+  `comparedValue` (`Array` or `Object`) - white list
 
 ```js
 inclusion('a', ['a', 'b', 'c']); //valid
@@ -143,44 +147,44 @@ inclusion('a', {a, 'smth'}); //valid
 inclusion(['a', 'b'], ['a', 'b', 'c']); //valid
 inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 ```
-**exclusion** - value is not contained in black list. If value is an array or object - neither item must to be in the list.
-* `comparedValue` (Array|Object) - black list
+- **exclusion** - value is not contained in black list. If value is an array or object - neither item must to be in the list.
+  `comparedValue` (`Array` or `Object`) - black list
 
 
-#### *Date and time* (valid if value is not valid date)
+*Date and time* (valid if value is not valid date)
 
-**maxDateTime** - value is less then maximum date
-* `comparedValue` (Date|String|Number) - maximum date
+- **maxDateTime** - value is less then maximum date
+  `comparedValue` (`Date` or `String` or `Number`) - maximum date
 
-**minDateTime** - value is more then minimum date
-* `comparedValue` (Date|String|Number) - minimum date
+- **minDateTime** - value is more then minimum date
+  `comparedValue` (`Date` or `String` or `Number`) - minimum date
 
-**rangeDateTime** - value is in the range from minimum to maximum dates (including)
-* `from` (Date|String|Number) - minimum date
-* `to` (Date|String|Number) - maximum date
+- **rangeDateTime** - value is in the range from minimum to maximum dates (including)
+  `from` (`Date` or `String` or `Number`) - minimum date
+  `to` (`Date` or `String` or `Number`) - maximum date
 
-**equalDateTime** - value is equal specified date
-* `comparedValue` (Date|String|Number) - specified date
+- **equalDateTime** - value is equal specified date
+  `comparedValue` (`Date` or `String` or `Number`) - specified date
 
-**maxDate** - value is less then maximum date (time is ignored)
-* `comparedValue` (Date|String|Number) - maximum date
+- **maxDate** - value is less then maximum date (time is ignored)
+  `comparedValue` (`Date` or `String` or `Number`) - maximum date
 
-**minDate** - value is more then minimum date (time is ignored)
-* `comparedValue` (Date|String|Number) - minimum date
+- **minDate** - value is more then minimum date (time is ignored)
+  `comparedValue` (`Date` or `String` or `Number`) - minimum date
 
-**rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
-* `from` (Date|String|Number) - minimum date
-* `to` (Date|String|Number) - maximum date
+- **rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
+  `from` (`Date` or `String` or `Number`) - minimum date
+  `to` (`Date` or `String` or `Number`) - maximum date
 
-**equalDate** - value is equal specified date (time is ignored)
-* `comparedValue` (Date|String|Number) - specified date
+- **equalDate** - value is equal specified date (time is ignored)
+  `comparedValue` (`Date` or `String` or `Number`) - specified date
 
 
-#### *Web* (valid if value is not string or empty)
+*Web* (valid if value is not string or empty)
 
-**email** - value is email address
+- **email** - value is email address
 
-**url** - value is URL
+- **url** - value is URL
 
 
 ## Tests

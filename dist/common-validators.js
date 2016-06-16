@@ -190,8 +190,8 @@ validators.load({
     empty: 'required',
 
     //Equality
-    equal: function equal(value, options) {
-        if (!isEmpty(value) && !deepEqual(value, options.comparedValue, options.strict)) {
+    equal: function equal(value, comparedValue, options) {
+        if (!isEmpty(value) && !deepEqual(value, comparedValue, options.strict)) {
             return 'must be equal %{comparedValue}';
         }
     },
@@ -246,14 +246,14 @@ validators.load({
     },
 
     //Number
-    max: function max(value, options) {
-        if (isNumber(value) && !isEmpty(value) && value > options.comparedValue) {
+    max: function max(value, comparedValue, options) {
+        if (isNumber(value) && !isEmpty(value) && value > comparedValue) {
             return 'is too large (maximum is %{comparedValue})';
         }
     },
 
-    min: function min(value, options) {
-        if (isNumber(value) && !isEmpty(value) && value < options.comparedValue) {
+    min: function min(value, comparedValue, options) {
+        if (isNumber(value) && !isEmpty(value) && value < comparedValue) {
             return 'is too short (minimum is %{comparedValue})';
         }
     },
@@ -286,27 +286,27 @@ validators.load({
         }
     },
 
-    divisible: function divisible(value, options) {
-        if (isNumber(value) && !isEmpty(value) && value % options.comparedValue !== 0) {
+    divisible: function divisible(value, comparedValue, options) {
+        if (isNumber(value) && !isEmpty(value) && value % comparedValue !== 0) {
             return 'must be divisible by %{comparedValue}';
         }
     },
 
     //Length
-    maxLength: function maxLength(value, options) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > options.comparedValue) {
+    maxLength: function maxLength(value, comparedValue, options) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > comparedValue) {
             return 'is too long (maximum is %{comparedValue})';
         }
     },
 
-    minLength: function minLength(value, options) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < options.comparedValue) {
+    minLength: function minLength(value, comparedValue, options) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < comparedValue) {
             return 'is too short (minimum is %{comparedValue})';
         }
     },
 
-    equalLength: function equalLength(value, options) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === options.comparedValue) {
+    equalLength: function equalLength(value, comparedValue, options) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === comparedValue) {
             return 'has an incorrect length (must be equal %{comparedValue})';
         }
     },
@@ -328,31 +328,31 @@ validators.load({
     },
 
     //RegExp
-    pattern: function pattern(value, options) {
-        if (isString(value) && !isEmpty(value) && !new RegExp(options.comparedValue).test(value)) {
+    pattern: function pattern(value, comparedValue, options) {
+        if (isString(value) && !isEmpty(value) && !new RegExp(comparedValue).test(value)) {
             return 'does not match the pattern %{comparedValue}';
         }
     },
     format: 'pattern',
 
     //White and black list
-    inclusion: function inclusion(value, options) {
-        if (!isEmpty(value) && !contains(options.comparedValue, value)) {
+    inclusion: function inclusion(value, comparedValue, options) {
+        if (!isEmpty(value) && !contains(comparedValue, value)) {
             return '%{value} is not allowed';
         }
     },
 
-    exclusion: function exclusion(value, options) {
-        if (!isEmpty(value) && contains(options.comparedValue, value, true)) {
+    exclusion: function exclusion(value, comparedValue, options) {
+        if (!isEmpty(value) && contains(comparedValue, value, true)) {
             return '%{value} is restricted';
         }
     },
 
     //Date and time
-    maxDateTime: function maxDateTime(value, options) {
+    maxDateTime: function maxDateTime(value, comparedValue, options) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(options.comparedValue);
+            var comparedDateTime = new Date(comparedValue);
 
             if (dateTime > comparedDateTime) {
                 return 'must be earlier than %{comparedValue}';
@@ -360,10 +360,10 @@ validators.load({
         }
     },
 
-    maxDate: function maxDate(value, options) {
+    maxDate: function maxDate(value, comparedValue, options) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(options.comparedValue);
+            var comparedDateTime = new Date(comparedValue);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date > comparedDateTime) {
@@ -372,10 +372,10 @@ validators.load({
         }
     },
 
-    minDateTime: function minDateTime(value, options) {
+    minDateTime: function minDateTime(value, comparedValue, options) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(options.comparedValue);
+            var comparedDateTime = new Date(comparedValue);
 
             if (dateTime < comparedDateTime) {
                 return 'must be no earlier than %{comparedValue}';
@@ -383,10 +383,10 @@ validators.load({
         }
     },
 
-    minDate: function minDate(value, options) {
+    minDate: function minDate(value, comparedValue, options) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(options.comparedValue);
+            var comparedDateTime = new Date(comparedValue);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date < comparedDateTime) {
@@ -395,10 +395,10 @@ validators.load({
         }
     },
 
-    equalDateTime: function equalDateTime(value, options) {
+    equalDateTime: function equalDateTime(value, comparedValue, options) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(options.comparedValue);
+            var comparedDateTime = new Date(comparedValue);
 
             if (dateTime === comparedDateTime) {
                 return 'must be equal %{comparedValue}';
@@ -406,10 +406,10 @@ validators.load({
         }
     },
 
-    equalDate: function equalDate(value, options) {
+    equalDate: function equalDate(value, comparedValue, options) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(options.comparedValue);
+            var comparedDateTime = new Date(comparedValue);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date === comparedDateTime) {
@@ -615,14 +615,27 @@ Validators.prototype.add = function (name, validator) {
     var _this2 = this;
 
     if (typeof validator === 'string') {
-        this[name] = function (value, options) {
-            return _this2[validator](value, options, name);
+        this[name] = function (value, comparedValue, options) {
+            return _this2[validator](value, comparedValue, options, name);
         };
     } else if (typeof validator === 'function') {
-        this[name] = function (value, options, validatorName) {
-            if ({}.toString.call(options) !== '[object Object]') {
-                //options can be regExp or array
-                options = { comparedValue: options };
+        this[name] = function (value, comparedValue, options, validatorName) {
+            var noComparedValue;
+
+            if (validator.length < 3) {
+                noComparedValue = true;
+                options = comparedValue;
+            }
+
+            options = options || {};
+
+            if (options.hasOwnProperty('comparedValue')) {
+                noComparedValue = false;
+                comparedValue = options.comparedValue;
+            }
+
+            if (!noComparedValue) {
+                options.comparedValue = comparedValue;
             }
 
             options = Object.assign({}, _this2[name].defaultOptions, options);
@@ -631,7 +644,7 @@ Validators.prototype.add = function (name, validator) {
                 value = options.parse(value);
             }
 
-            var error = validator(value, options);
+            var error = noComparedValue ? validator(value, options) : validator(value, comparedValue, options);
 
             if (error) {
                 var _ret2 = function () {
