@@ -53,7 +53,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **comparedValue** (`Any`) - value for comparison. User can set it as `options.comparedValue`
 
-- **options** (`Object`) - options  
+- **options** (`Object`) - options
   * `comparedValue` (`Any`) - Will be set if comparedValue is specified
   * `parse` (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
