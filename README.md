@@ -50,13 +50,16 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **value** (`Any`) - Validated value
 
-- **comparedValue** (`Any`) - value for comparison. User can set it as `options.comparedValue`
+- **comparedValue** (`Any`) - Value for comparison. Can not be an object or undefined. User can set it as `options.comparedValue`.
+                              If you use 'comparedValue' in your validator you must be sure that user will specify this value
 
-- **options** (`Object`) - options
+- **options** (`Object`) - Options
   * comparedValue (`Any`) - Will be set if comparedValue is specified
   * message (`Any`) - Override error message
   * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
+
+- (`Any`) - Any custom arguments
 
 - **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
 
