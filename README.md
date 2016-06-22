@@ -68,7 +68,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 - **required | presence | empty** - validates that the value isn't empty.
 
 
-*Types*
+#### *Types*
 
 - **object** - value is plain object
 
@@ -87,14 +87,14 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 - **null** - value is null
 
 
-*Equality (valid if value is empty)*
+#### *Equality (valid if value is empty)*
 
 - **equal** - value is equal to specified value (deep equal for objects)
   * comparedValue (`Boolean`) - specified value
   * strict (`Boolean`) - Use strict comparison (===). `true` by default
 
 
-*Numbers* (valid if value is not number or empty)
+#### *Numbers* (valid if value is not number or empty)
 
 - **max** - value is less then maximum
   * comparedValue (`Number`) - maximum
@@ -114,7 +114,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * comparedValue (`Number`) - divisor
 
 
-*Length* (valid if value is not string or not array or empty)
+#### *Length* (valid if value is not string or not array or empty)
 
 - **maxLength** - value's length is less then maximum
   * comparedValue (`Number`) - maximum
@@ -130,13 +130,13 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * comparedValue (`Number`) - divisor
 
 
-*RegExp* (valid if value is not string or empty)
+#### *RegExp* (valid if value is not string or empty)
 
 - **pattern | format** - value matches the pattern
   * comparedValue (`String` or `RegExp`) - pattern
 
 
-*White and black list* (valid if value is empty)
+#### *White and black list* (valid if value is empty)
 
 - **inclusion** - value is contained in white list. If value is an array or object - every item must to be in the list.
   * comparedValue (`Array` or `Object`) - white list
@@ -151,7 +151,7 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * comparedValue (`Array` or `Object`) - black list
 
 
-*Date and time* (valid if value is not valid date)
+#### *Date and time* (valid if value is not valid date)
 
 - **maxDateTime** - value is less then maximum date
   * comparedValue (`Date` or `String` or `Number`) - maximum date
@@ -180,7 +180,7 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * comparedValue (`Date` or `String` or `Number`) - specified date
 
 
-*Web* (valid if value is not string or empty)
+#### *Web* (valid if value is not string or empty)
 
 - **email** - value is email address
 
