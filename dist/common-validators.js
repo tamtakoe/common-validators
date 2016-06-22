@@ -766,7 +766,7 @@ Validators.prototype.add = function (name, validator) {
             var options = void 0;
             var args = Array.prototype.slice.call(arguments, 2);
 
-            if ({}.toString.call(arguments[1]) === '[object Object]') {
+            if (arguments[1] === undefined || {}.toString.call(arguments[1]) === '[object Object]') {
                 options = arguments[1] || {};
             } else {
                 options = arguments[2] || {};
