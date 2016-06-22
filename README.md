@@ -54,6 +54,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **options** (`Object`) - options
   * comparedValue (`Any`) - Will be set if comparedValue is specified
+  * message (Any) - Override error message
   * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
 
