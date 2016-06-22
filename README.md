@@ -42,7 +42,7 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 
 ### Validators.add, Validators.load
 
-Use this methods for adding custom validators in simple format (see common-validators-library.js in module folder).
+Use this methods for adding custom validators in simple format (see 'lib/common-validators-library.js').
 See more in [validators-constructor documentation](https://www.npmjs.com/package/validators-constructor).
 Also you can use `Object.assign(commonValidators, customValidators)` in other situations
 
