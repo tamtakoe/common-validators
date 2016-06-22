@@ -20,5 +20,32 @@ describe('confirm', function() {
 
     it('password doesn\'t equal confirmedPassword', function() {
         expect(validators.confirm({password: 'cba', confirmedPassword: 'abc'}, {key: 'password', comparedKey: 'confirmedPassword'})).to.have.property('error');
+
+
+        // expect(validators.confirm('abc', {password: 'cba', confirmedPassword: 'abc', obj: obj})).to.have.property('error');
+        //
+        //
+        //
+        // expect(validators.confirm('abc', {password: 'cba', confirmedPassword: 'abc'}, {obj: obj})).to.have.property('error');
+        //
+        //
+        //
+        // validators.confirm('abc', {compareWith: 'confirmedPassword'}, 'password', allObject);
+        //
+        //
+        //
+        // validators.minLength('string', 10, 'a', object, validatorOptions);
+        //
+        // validators.presence('string', true, 'a', object, validatorOptions);
     });
+
+    // var schema = {
+    //     a: {
+    //         minLength: 10
+    //     }
+    // };
+    //
+    // var object = {
+    //     a: 'string'
+    // };
 });

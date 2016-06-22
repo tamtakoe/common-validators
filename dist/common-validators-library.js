@@ -38,6 +38,54 @@ module.exports = {
         }
     },
 
+    confirm: function confirm(value, options) {
+        if (!isEmpty(value) && isPlainObject(value) && !deepEqual(value[options.key], value[options.comparedKey], options.strict)) {
+            return '%{option} must be equal %{comparedOption}';
+        }
+    },
+
+    // confirm1: function(value, comparedKey, options, context, allObject, path) {
+    //   
+    //     if (context) {
+    //         if (value !== context[comparedKey]) {
+    //             return 'invalid';
+    //         }
+    //
+    //         'abc'
+    //         '$.abc'
+    //     }
+    //  
+    //
+    //     var object = {
+    //         a: {
+    //             b: {
+    //                 c: 1
+    //             }
+    //         },
+    //         c: 1
+    //     };
+    //
+    //
+    //     1, { comparedKey: 'a.b.c' }, object, object, ['c']
+    //     1, { comparedKey: 'a.b.c' }, 'c', object, globalOptions
+    //
+    //
+    //
+    //
+    //     validate.single("foo@bar.com", {email: {strict: true}});
+    //     validate.single("foo@bar.com", {presence: true});
+    //
+    //
+    //     options = {
+    //         key: 'c',
+    //         comparedKey: 'a.b.c'
+    //     };
+    //
+    //     if (!isEmpty(value) && isPlainObject(value) && !deepEqual(value[options.key], value[options.comparedKey], options.strict)) {
+    //         return '%{option} must be equal %{comparedOption}';
+    //     }
+    // },
+
     //Types
     object: function object(value) {
         if (!isPlainObject(value)) {
@@ -88,7 +136,7 @@ module.exports = {
     },
 
     //Number
-    max: function max(value, comparedValue, options) {
+    max: function max(value, comparedValue) {
         // var errorEmpty = this.empty(value);
         // var errorType = this.number(value);
         //
@@ -109,7 +157,7 @@ module.exports = {
         }
     },
 
-    min: function min(value, comparedValue, options) {
+    min: function min(value, comparedValue) {
         //inclusive flag
         if (isNumber(value) && !isEmpty(value) && value < comparedValue) {
             return 'is too short (minimum is %{comparedValue})';
@@ -145,7 +193,7 @@ module.exports = {
         }
     },
 
-    divisible: function divisible(value, comparedValue, options) {
+    divisible: function divisible(value, comparedValue) {
         if (isNumber(value) && !isEmpty(value) && value % comparedValue !== 0) {
             return 'must be divisible by %{comparedValue}';
         }
@@ -158,7 +206,7 @@ module.exports = {
     },
 
     //Length
-    minLengthStrict: ['required', 'stringOrArray', { validator: 'custom', options: {} }, function (value, comparedValue, options) {
+    minLengthStrict: ['required', 'stringOrArray', { validator: 'custom', options: {} }, function (value, comparedValue) {
         if (value.length < comparedValue) {
             // return 'is too short (minimum is %{comparedValue})';
             return {
@@ -168,19 +216,19 @@ module.exports = {
         }
     }],
 
-    maxLength: function maxLength(value, comparedValue, options) {
+    maxLength: function maxLength(value, comparedValue) {
         if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > comparedValue) {
             return 'is too long (maximum is %{comparedValue})';
         }
     },
 
-    minLength: function minLength(value, comparedValue, options) {
+    minLength: function minLength(value, comparedValue) {
         if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < comparedValue) {
             return 'is too short (minimum is %{comparedValue})';
         }
     },
 
-    equalLength: function equalLength(value, comparedValue, options) {
+    equalLength: function equalLength(value, comparedValue) {
         if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === comparedValue) {
             return 'has an incorrect length (must be equal %{comparedValue})';
         }
@@ -204,7 +252,7 @@ module.exports = {
     inLengths: 'rangeLength',
 
     //RegExp
-    pattern: function pattern(value, comparedValue, options) {
+    pattern: function pattern(value, comparedValue) {
         if (isString(value) && !isEmpty(value) && !new RegExp(comparedValue).test(value)) {
             return 'does not match the pattern %{comparedValue}';
         }
@@ -212,20 +260,20 @@ module.exports = {
     format: 'pattern',
 
     //White and black list
-    inclusion: function inclusion(value, comparedValue, options) {
+    inclusion: function inclusion(value, comparedValue) {
         if (!isEmpty(value) && !contains(comparedValue, value)) {
             return '%{value} is not allowed';
         }
     },
 
-    exclusion: function exclusion(value, comparedValue, options) {
+    exclusion: function exclusion(value, comparedValue) {
         if (!isEmpty(value) && contains(comparedValue, value, true)) {
             return '%{value} is restricted';
         }
     },
 
     //Date and time
-    maxDateTime: function maxDateTime(value, comparedValue, options) {
+    maxDateTime: function maxDateTime(value, comparedValue) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
             var comparedDateTime = new Date(comparedValue);
@@ -236,7 +284,7 @@ module.exports = {
         }
     },
 
-    maxDate: function maxDate(value, comparedValue, options) {
+    maxDate: function maxDate(value, comparedValue) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
             var comparedDateTime = new Date(comparedValue);
@@ -248,7 +296,7 @@ module.exports = {
         }
     },
 
-    minDateTime: function minDateTime(value, comparedValue, options) {
+    minDateTime: function minDateTime(value, comparedValue) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
             var comparedDateTime = new Date(comparedValue);
@@ -259,7 +307,7 @@ module.exports = {
         }
     },
 
-    minDate: function minDate(value, comparedValue, options) {
+    minDate: function minDate(value, comparedValue) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
             var comparedDateTime = new Date(comparedValue);
@@ -271,7 +319,7 @@ module.exports = {
         }
     },
 
-    equalDateTime: function equalDateTime(value, comparedValue, options) {
+    equalDateTime: function equalDateTime(value, comparedValue) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
             var comparedDateTime = new Date(comparedValue);
@@ -282,7 +330,7 @@ module.exports = {
         }
     },
 
-    equalDate: function equalDate(value, comparedValue, options) {
+    equalDate: function equalDate(value, comparedValue) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
             var comparedDateTime = new Date(comparedValue);
