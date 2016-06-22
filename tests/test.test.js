@@ -27,9 +27,9 @@ describe('custom', function() {
     //     expect(validators.minLengthStrict('aaa', 5)).to.have.property('error');
     // });
 
-    it.only('test minLengthStrict console', function() {
-        // var error = validators.minLengthStrict('', {comparedValue: 5, message: {error: 'aaa', message: 'bbb'}});
-        var error = validators.minLengthStrict('www', 5);
-        console.log(error);
-    });
+    // it.only('test minLengthStrict console', function() {
+    //     // var error = validators.minLengthStrict('', {comparedValue: 5, message: {error: 'aaa', message: 'bbb'}});
+    //     var error = validators.minLengthStrict('www', 5);
+    //     console.log(error);
+    // });
 });
