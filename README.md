@@ -58,7 +58,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
 
-- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
+- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
 
 ### Validators:
 
