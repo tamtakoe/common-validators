@@ -29,7 +29,7 @@
     "README.md"
   ],
   "dependencies": {
-    "validators-constructor": "0.0.8"
+    "validators-constructor": "0.0.9"
   },
   "devDependencies": {
     "babel-cli": "6.9.0",
