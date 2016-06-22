@@ -21,7 +21,7 @@ validators.maxLength('abc', 2); //or validators.maxLength('abc', {comparedValue:
 /* returns:
 {
     message: 'is too long (maximum is 2)',
-    error: 'maxLength',
+    error: 'maxLength', //validator name by default
     comparedValue: 2
 }
 */
@@ -90,9 +90,13 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 #### *Equality (valid if value is empty)*
 
 - **equal** - value is equal to specified value (deep equal for objects)
-  * comparedValue (`Boolean`) - specified value
+  * comparedValue (`Any`) - specified value
   * strict (`Boolean`) - Use strict comparison (===). `true` by default
 
+- **confirm** - option in object is equal to other option in the same object. Value need to be an object
+  * key (`String`) - first key in value
+  * comparedKey (`String`) - second key in value
+  * strict (`Boolean`) - Use strict comparison (===). `true` by default
 
 #### *Numbers* (valid if value is not number or empty)
 

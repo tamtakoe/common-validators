@@ -33,6 +33,12 @@ module.exports = {
         }
     },
 
+    confirm: function(value, options) {
+        if (!isEmpty(value) && isPlainObject(value) && !deepEqual(value[options.key], value[options.comparedKey], options.strict)) {
+            return '%{option} must be equal %{comparedOption}';
+        }
+    },
+
     //Types
     object: function(value) {
         if (!isPlainObject(value)) {
