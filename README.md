@@ -29,9 +29,8 @@ validators.maxLength('abc', 2); //or validators.maxLength('abc', {comparedValue:
 validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'is too many'});
 /* returns (except options which end in `Message`):
 {
-    type: 'many',
     message: 'is too many',
-    error: 'range',
+    error: 'range.many',
     from: 1,
     to: 5
 }
