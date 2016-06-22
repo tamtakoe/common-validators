@@ -42,7 +42,7 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 
 ### Validators.add, Validators.load
 
-Use this methods for adding custom validators in simple format.
+Use this methods for adding custom validators in simple format (see common-validators-library.js in module folder).
 See more in [validators-constructor documentation](https://www.npmjs.com/package/validators-constructor).
 Also you can use `Object.assign(commonValidators, customValidators)` in other situations
 
@@ -103,8 +103,8 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * `comparedValue` (`Number`) - minimum
 
 - **range** - value is in the range from minimum to maximum (including)
-  * `from` (`Number`) - minimum
-  * `to` (`Number`) - maximum
+  * `from` (`Number`) - minimum. Error: `range.many`
+  * `to` (`Number`) - maximum. Error: `range.less`
 
 - **odd** - value is odd
 
@@ -123,8 +123,8 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * `comparedValue` (`Number`) - minimum
 
 - **rangeLength** - value's length is in the range from minimum to maximum (including)
-  * `from` (`Number`) - minimum
-  * `to` (`Number`) - maximum
+  * `from` (`Number`) - minimum. Error: `rangeLength.many`
+  * `to` (`Number`) - maximum. Error: `rangeLength.less`
 
 - **equalLength** - value's length is equal to specified value
   * `comparedValue` (`Number`) - divisor
@@ -160,8 +160,8 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * `comparedValue` (`Date` or `String` or `Number`) - minimum date
 
 - **rangeDateTime** - value is in the range from minimum to maximum dates (including)
-  * `from` (`Date` or `String` or `Number`) - minimum date
-  * `to` (`Date` or `String` or `Number`) - maximum date
+  * `from` (`Date` or `String` or `Number`) - minimum date. Error: `rangeDateTime.many`
+  * `to` (`Date` or `String` or `Number`) - maximum date. Error: `rangeDateTime.less`
 
 - **equalDateTime** - value is equal specified date
   * `comparedValue` (`Date` or `String` or `Number`) - specified date
@@ -173,8 +173,8 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * `comparedValue` (`Date` or `String` or `Number`) - minimum date
 
 - **rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
-  * `from` (`Date` or `String` or `Number`) - minimum date
-  * `to` (`Date` or `String` or `Number`) - maximum date
+  * `from` (`Date` or `String` or `Number`) - minimum date. Error: `rangeDate.many`
+  * `to` (`Date` or `String` or `Number`) - maximum date. Error: `rangeDate.less`
 
 - **equalDate** - value is equal specified date (time is ignored)
   * `comparedValue` (`Date` or `String` or `Number`) - specified date
@@ -185,6 +185,7 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 - **email** - value is email address
 
 - **url** - value is URL
+  * `allowLocal` (`Boolean`) - allows local hostnames such as 10.0.1.1 or localhost
 
 
 ## Tests

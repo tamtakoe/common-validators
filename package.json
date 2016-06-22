@@ -29,7 +29,7 @@
     "README.md"
   ],
   "dependencies": {
-    "validators-constructor": "0.0.3"
+    "validators-constructor": "0.0.6"
   },
   "devDependencies": {
     "babel-cli": "6.9.0",
@@ -44,6 +44,8 @@
     "babelify": "babel src --presets es2015 --out-dir lib",
     "browserify": "browserify ./lib/common-validators.js --standalone commonValidators --outfile dist/common-validators.js",
     "minify": "uglifyjs dist/common-validators.js --output dist/common-validators.min.js",
-    "build": "npm run babelify && npm run browserify && npm run minify"
+    "browserifyLibrary": "browserify ./lib/common-validators-library.js --standalone commonValidatorsLibrary --outfile dist/common-validators-library.js",
+    "minifyLibrary": "uglifyjs dist/common-validators-library.js --output dist/common-validators-library.min.js",
+    "build": "npm run babelify && npm run browserify && npm run minify && npm run browserifyLibrary && npm run minifyLibrary"
   }
 }
