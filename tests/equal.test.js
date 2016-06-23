@@ -29,7 +29,7 @@ describe('equal', function() {
     });
 
     it('object equals the same object', function() {
-        expect(validators.equal({a: {b: 1}, c: 2}, {comparedValue: {c: 2, a: {b: 1}}})).to.be.undefined;
+        expect(validators.equal({a: {b: 1}, c: 2}, {arg: {c: 2, a: {b: 1}}})).to.be.undefined;
     });
 
     it('array equals the same array', function() {

@@ -22,19 +22,19 @@ module.exports = {
     required: 'empty',
 
     //Equality
-    equal: function equal(value, comparedValue, options) {
+    equal: function equal(value, arg, options) {
         // var errorEmpty = this.empty(value);
         //
         // if (options.allowEmpty && errorEmpty) {
         //     return errorEmpty;
         // }
         //
-        // if (!errorEmpty && !deepEqual(value, comparedValue, options.strict)) {
-        //     return 'must be equal %{comparedValue}';
+        // if (!errorEmpty && !deepEqual(value, arg, options.strict)) {
+        //     return 'must be equal %{arg}';
         // }
 
-        if (!isEmpty(value) && !deepEqual(value, comparedValue, options.strict)) {
-            return 'must be equal %{comparedValue}';
+        if (!isEmpty(value) && !deepEqual(value, arg, options.strict)) {
+            return 'must be equal %{arg}';
         }
     },
 
@@ -136,7 +136,7 @@ module.exports = {
     },
 
     //Number
-    max: function max(value, comparedValue) {
+    max: function max(value, arg) {
         // var errorEmpty = this.empty(value);
         // var errorType = this.number(value);
         //
@@ -148,19 +148,19 @@ module.exports = {
         //     return errorType;
         // }
         //
-        // if (!errorType && !errorEmpty && value > comparedValue) {
-        //     return 'is too large (maximum is %{comparedValue})';
+        // if (!errorType && !errorEmpty && value > arg) {
+        //     return 'is too large (maximum is %{arg})';
         // }
 
-        if (isNumber(value) && !isEmpty(value) && value > comparedValue) {
-            return 'is too large (maximum is %{comparedValue})';
+        if (isNumber(value) && !isEmpty(value) && value > arg) {
+            return 'is too large (maximum is %{arg})';
         }
     },
 
-    min: function min(value, comparedValue) {
+    min: function min(value, arg) {
         //inclusive flag
-        if (isNumber(value) && !isEmpty(value) && value < comparedValue) {
-            return 'is too short (minimum is %{comparedValue})';
+        if (isNumber(value) && !isEmpty(value) && value < arg) {
+            return 'is too short (minimum is %{arg})';
         }
     },
 
@@ -193,9 +193,9 @@ module.exports = {
         }
     },
 
-    divisible: function divisible(value, comparedValue) {
-        if (isNumber(value) && !isEmpty(value) && value % comparedValue !== 0) {
-            return 'must be divisible by %{comparedValue}';
+    divisible: function divisible(value, arg) {
+        if (isNumber(value) && !isEmpty(value) && value % arg !== 0) {
+            return 'must be divisible by %{arg}';
         }
     },
 
@@ -206,9 +206,9 @@ module.exports = {
     },
 
     //Length
-    minLengthStrict: ['required', 'stringOrArray', { validator: 'custom', options: {} }, function (value, comparedValue) {
-        if (value.length < comparedValue) {
-            // return 'is too short (minimum is %{comparedValue})';
+    minLengthStrict: ['required', 'stringOrArray', { validator: 'custom', options: {} }, function (value, arg) {
+        if (value.length < arg) {
+            // return 'is too short (minimum is %{arg})';
             return {
                 error: 'aaadddd',
                 message: 'ololo'
@@ -216,21 +216,21 @@ module.exports = {
         }
     }],
 
-    maxLength: function maxLength(value, comparedValue) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > comparedValue) {
-            return 'is too long (maximum is %{comparedValue})';
+    maxLength: function maxLength(value, arg) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > arg) {
+            return 'is too long (maximum is %{arg})';
         }
     },
 
-    minLength: function minLength(value, comparedValue) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < comparedValue) {
-            return 'is too short (minimum is %{comparedValue})';
+    minLength: function minLength(value, arg) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < arg) {
+            return 'is too short (minimum is %{arg})';
         }
     },
 
-    equalLength: function equalLength(value, comparedValue) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === comparedValue) {
-            return 'has an incorrect length (must be equal %{comparedValue})';
+    equalLength: function equalLength(value, arg) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === arg) {
+            return 'has an incorrect length (must be equal %{arg})';
         }
     },
 
@@ -252,92 +252,92 @@ module.exports = {
     inLengths: 'rangeLength',
 
     //RegExp
-    pattern: function pattern(value, comparedValue) {
-        if (isString(value) && !isEmpty(value) && !new RegExp(comparedValue).test(value)) {
-            return 'does not match the pattern %{comparedValue}';
+    pattern: function pattern(value, arg) {
+        if (isString(value) && !isEmpty(value) && !new RegExp(arg).test(value)) {
+            return 'does not match the pattern %{arg}';
         }
     },
     format: 'pattern',
 
     //White and black list
-    inclusion: function inclusion(value, comparedValue) {
-        if (!isEmpty(value) && !contains(comparedValue, value)) {
+    inclusion: function inclusion(value, arg) {
+        if (!isEmpty(value) && !contains(arg, value)) {
             return '%{value} is not allowed';
         }
     },
 
-    exclusion: function exclusion(value, comparedValue) {
-        if (!isEmpty(value) && contains(comparedValue, value, true)) {
+    exclusion: function exclusion(value, arg) {
+        if (!isEmpty(value) && contains(arg, value, true)) {
             return '%{value} is restricted';
         }
     },
 
     //Date and time
-    maxDateTime: function maxDateTime(value, comparedValue) {
+    maxDateTime: function maxDateTime(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
 
             if (dateTime > comparedDateTime) {
-                return 'must be earlier than %{comparedValue}';
+                return 'must be earlier than %{arg}';
             }
         }
     },
 
-    maxDate: function maxDate(value, comparedValue) {
+    maxDate: function maxDate(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date > comparedDateTime) {
-                return 'must be earlier than %{comparedValue}';
+                return 'must be earlier than %{arg}';
             }
         }
     },
 
-    minDateTime: function minDateTime(value, comparedValue) {
+    minDateTime: function minDateTime(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
 
             if (dateTime < comparedDateTime) {
-                return 'must be no earlier than %{comparedValue}';
+                return 'must be no earlier than %{arg}';
             }
         }
     },
 
-    minDate: function minDate(value, comparedValue) {
+    minDate: function minDate(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date < comparedDateTime) {
-                return 'must be no earlier than %{comparedValue}';
+                return 'must be no earlier than %{arg}';
             }
         }
     },
 
-    equalDateTime: function equalDateTime(value, comparedValue) {
+    equalDateTime: function equalDateTime(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
 
             if (dateTime === comparedDateTime) {
-                return 'must be equal %{comparedValue}';
+                return 'must be equal %{arg}';
             }
         }
     },
 
-    equalDate: function equalDate(value, comparedValue) {
+    equalDate: function equalDate(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date === comparedDateTime) {
-                return 'must be equal %{comparedValue}';
+                return 'must be equal %{arg}';
             }
         }
     },
@@ -622,7 +622,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var FORMAT_REGEXP = /(%?)%\{([^\}]+)\}/g; // Finds %{key} style patterns in the given string
 var MESSAGE_REGEXP = /message/i;
-var COMPARED_VALUE = 'comparedValue';
 var hiddenPropertySettings = {
     enumerable: false,
     configurable: false,
@@ -640,11 +639,11 @@ var hiddenPropertySettings = {
  */
 function validatorWrapper(validators, name, validator) {
     return function (value, options) {
-        var _this = this;
-
         var args = arguments;
+        var alias = this.alias;
+        var _this = this._this || this;
         var validatorObj = validators[name];
-        var validatorAliasObj = this.alias ? validators[this.alias] : {};
+        var validatorAliasObj = alias ? validators[alias] : {};
 
         options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
@@ -652,8 +651,8 @@ function validatorWrapper(validators, name, validator) {
             value = options.parse(value);
         }
 
-        if (options.hasOwnProperty(COMPARED_VALUE)) {
-            args = [value, options[COMPARED_VALUE]].concat(Array.prototype.slice.call(arguments, 1));
+        if (options.hasOwnProperty(_this.arg)) {
+            args = [value, options[_this.arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
         var error = validator.apply(validators, args);
@@ -689,7 +688,7 @@ function validatorWrapper(validators, name, validator) {
                     }
 
                     return {
-                        v: validators.formatMessage(format, Object.assign({ validator: _this.alias || name, value: value }, options, formattedErrorMessage))
+                        v: validators.formatMessage(format, Object.assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
                     };
                 }
 
@@ -735,7 +734,8 @@ function formatStr(str, values) {
 function Validators(options) {
     Object.defineProperties(this, {
         errorFormat: hiddenPropertySettings,
-        formatStr: hiddenPropertySettings
+        formatStr: hiddenPropertySettings,
+        arg: hiddenPropertySettings
     });
 
     this.errorFormat = {
@@ -747,6 +747,8 @@ function Validators(options) {
 
     this.formatStr = formatStr;
 
+    this.arg = 'arg';
+
     Object.assign(this, options);
 }
 
@@ -755,14 +757,16 @@ function Validators(options) {
  * @param {Function|String|Array} validator, alias or validators array
  */
 Validators.prototype.add = function (name, validator) {
+    var _this = this;
+
     if (typeof validator === 'string') {
-        this[name] = function () /*value, comparedValue, options*/{
-            return this[validator].apply({ alias: name, _this: this }, arguments);
+        this[name] = function () /*value, arg, options*/{
+            return _this[validator].apply({ alias: name, _this: _this }, arguments);
         };
     } else {
         var validators = validator instanceof Array ? validator : [validator];
 
-        this[name] = function (value /*comparedValue, options*/) {
+        this[name] = function (value /*arg, options*/) {
             var options = void 0;
             var args = Array.prototype.slice.call(arguments, 2);
 
@@ -770,22 +774,24 @@ Validators.prototype.add = function (name, validator) {
                 options = arguments[1] || {};
             } else {
                 options = arguments[2] || {};
-                options[COMPARED_VALUE] = arguments[1];
+                options[this.arg] = arguments[1];
                 args.shift();
             }
+
+            _this = this._this || _this;
 
             for (var i = 0; i < validators.length; i++) {
                 var base = validators[i];
 
                 switch (typeof base === 'undefined' ? 'undefined' : _typeof(base)) {
                     case 'function':
-                        validator = validatorWrapper(this._this || this, name, base);break;
+                        validator = validatorWrapper(_this, name, base);break;
 
                     case 'string':
-                        validator = this[base];break;
+                        validator = _this[base];break;
 
                     case 'object':
-                        validator = this[base.validator];
+                        validator = _this[base.validator];
                         options = Object.assign({}, options, base.options);
                 }
 

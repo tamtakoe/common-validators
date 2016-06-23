@@ -22,19 +22,19 @@ module.exports = {
     required: 'empty',
 
     //Equality
-    equal: function equal(value, comparedValue, options) {
+    equal: function equal(value, arg, options) {
         // var errorEmpty = this.empty(value);
         //
         // if (options.allowEmpty && errorEmpty) {
         //     return errorEmpty;
         // }
         //
-        // if (!errorEmpty && !deepEqual(value, comparedValue, options.strict)) {
-        //     return 'must be equal %{comparedValue}';
+        // if (!errorEmpty && !deepEqual(value, arg, options.strict)) {
+        //     return 'must be equal %{arg}';
         // }
 
-        if (!isEmpty(value) && !deepEqual(value, comparedValue, options.strict)) {
-            return 'must be equal %{comparedValue}';
+        if (!isEmpty(value) && !deepEqual(value, arg, options.strict)) {
+            return 'must be equal %{arg}';
         }
     },
 
@@ -136,7 +136,7 @@ module.exports = {
     },
 
     //Number
-    max: function max(value, comparedValue) {
+    max: function max(value, arg) {
         // var errorEmpty = this.empty(value);
         // var errorType = this.number(value);
         //
@@ -148,19 +148,19 @@ module.exports = {
         //     return errorType;
         // }
         //
-        // if (!errorType && !errorEmpty && value > comparedValue) {
-        //     return 'is too large (maximum is %{comparedValue})';
+        // if (!errorType && !errorEmpty && value > arg) {
+        //     return 'is too large (maximum is %{arg})';
         // }
 
-        if (isNumber(value) && !isEmpty(value) && value > comparedValue) {
-            return 'is too large (maximum is %{comparedValue})';
+        if (isNumber(value) && !isEmpty(value) && value > arg) {
+            return 'is too large (maximum is %{arg})';
         }
     },
 
-    min: function min(value, comparedValue) {
+    min: function min(value, arg) {
         //inclusive flag
-        if (isNumber(value) && !isEmpty(value) && value < comparedValue) {
-            return 'is too short (minimum is %{comparedValue})';
+        if (isNumber(value) && !isEmpty(value) && value < arg) {
+            return 'is too short (minimum is %{arg})';
         }
     },
 
@@ -193,9 +193,9 @@ module.exports = {
         }
     },
 
-    divisible: function divisible(value, comparedValue) {
-        if (isNumber(value) && !isEmpty(value) && value % comparedValue !== 0) {
-            return 'must be divisible by %{comparedValue}';
+    divisible: function divisible(value, arg) {
+        if (isNumber(value) && !isEmpty(value) && value % arg !== 0) {
+            return 'must be divisible by %{arg}';
         }
     },
 
@@ -206,9 +206,9 @@ module.exports = {
     },
 
     //Length
-    minLengthStrict: ['required', 'stringOrArray', { validator: 'custom', options: {} }, function (value, comparedValue) {
-        if (value.length < comparedValue) {
-            // return 'is too short (minimum is %{comparedValue})';
+    minLengthStrict: ['required', 'stringOrArray', { validator: 'custom', options: {} }, function (value, arg) {
+        if (value.length < arg) {
+            // return 'is too short (minimum is %{arg})';
             return {
                 error: 'aaadddd',
                 message: 'ololo'
@@ -216,21 +216,21 @@ module.exports = {
         }
     }],
 
-    maxLength: function maxLength(value, comparedValue) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > comparedValue) {
-            return 'is too long (maximum is %{comparedValue})';
+    maxLength: function maxLength(value, arg) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > arg) {
+            return 'is too long (maximum is %{arg})';
         }
     },
 
-    minLength: function minLength(value, comparedValue) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < comparedValue) {
-            return 'is too short (minimum is %{comparedValue})';
+    minLength: function minLength(value, arg) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < arg) {
+            return 'is too short (minimum is %{arg})';
         }
     },
 
-    equalLength: function equalLength(value, comparedValue) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === comparedValue) {
-            return 'has an incorrect length (must be equal %{comparedValue})';
+    equalLength: function equalLength(value, arg) {
+        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === arg) {
+            return 'has an incorrect length (must be equal %{arg})';
         }
     },
 
@@ -252,92 +252,92 @@ module.exports = {
     inLengths: 'rangeLength',
 
     //RegExp
-    pattern: function pattern(value, comparedValue) {
-        if (isString(value) && !isEmpty(value) && !new RegExp(comparedValue).test(value)) {
-            return 'does not match the pattern %{comparedValue}';
+    pattern: function pattern(value, arg) {
+        if (isString(value) && !isEmpty(value) && !new RegExp(arg).test(value)) {
+            return 'does not match the pattern %{arg}';
         }
     },
     format: 'pattern',
 
     //White and black list
-    inclusion: function inclusion(value, comparedValue) {
-        if (!isEmpty(value) && !contains(comparedValue, value)) {
+    inclusion: function inclusion(value, arg) {
+        if (!isEmpty(value) && !contains(arg, value)) {
             return '%{value} is not allowed';
         }
     },
 
-    exclusion: function exclusion(value, comparedValue) {
-        if (!isEmpty(value) && contains(comparedValue, value, true)) {
+    exclusion: function exclusion(value, arg) {
+        if (!isEmpty(value) && contains(arg, value, true)) {
             return '%{value} is restricted';
         }
     },
 
     //Date and time
-    maxDateTime: function maxDateTime(value, comparedValue) {
+    maxDateTime: function maxDateTime(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
 
             if (dateTime > comparedDateTime) {
-                return 'must be earlier than %{comparedValue}';
+                return 'must be earlier than %{arg}';
             }
         }
     },
 
-    maxDate: function maxDate(value, comparedValue) {
+    maxDate: function maxDate(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date > comparedDateTime) {
-                return 'must be earlier than %{comparedValue}';
+                return 'must be earlier than %{arg}';
             }
         }
     },
 
-    minDateTime: function minDateTime(value, comparedValue) {
+    minDateTime: function minDateTime(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
 
             if (dateTime < comparedDateTime) {
-                return 'must be no earlier than %{comparedValue}';
+                return 'must be no earlier than %{arg}';
             }
         }
     },
 
-    minDate: function minDate(value, comparedValue) {
+    minDate: function minDate(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date < comparedDateTime) {
-                return 'must be no earlier than %{comparedValue}';
+                return 'must be no earlier than %{arg}';
             }
         }
     },
 
-    equalDateTime: function equalDateTime(value, comparedValue) {
+    equalDateTime: function equalDateTime(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
 
             if (dateTime === comparedDateTime) {
-                return 'must be equal %{comparedValue}';
+                return 'must be equal %{arg}';
             }
         }
     },
 
-    equalDate: function equalDate(value, comparedValue) {
+    equalDate: function equalDate(value, arg) {
         if (isDateTime(value)) {
             var dateTime = new Date(value);
-            var comparedDateTime = new Date(comparedValue);
+            var comparedDateTime = new Date(arg);
             var date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 
             if (date === comparedDateTime) {
-                return 'must be equal %{comparedValue}';
+                return 'must be equal %{arg}';
             }
         }
     },
