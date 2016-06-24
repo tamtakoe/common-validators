@@ -12,7 +12,7 @@ const validators = require('../src/common-validators');
 describe('custom', function() {
     const options = {
         myTrue: true,
-        validate: function(value, options) {
+        arg: function(value, options) {
             if (value !== options.myTrue) {
                 return 'not my true'
             }

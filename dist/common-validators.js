@@ -6,9 +6,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 /* Validators */
 
 module.exports = {
-    custom: function custom(value, options) {
-        if (typeof options.validate === 'function') {
-            return options.validate(value, options);
+    custom: function custom(value, arg, options) {
+        if (typeof arg === 'function') {
+            return arg(value, options);
         }
     },
 
@@ -640,8 +640,7 @@ var hiddenPropertySettings = {
 function validatorWrapper(validators, name, validator) {
     return function (value, options) {
         var args = arguments;
-        var alias = this.alias;
-        var _this = this._this || this;
+        var alias = this && this.alias;
         var validatorObj = validators[name];
         var validatorAliasObj = alias ? validators[alias] : {};
 
@@ -651,8 +650,8 @@ function validatorWrapper(validators, name, validator) {
             value = options.parse(value);
         }
 
-        if (options.hasOwnProperty(_this.arg)) {
-            args = [value, options[_this.arg]].concat(Array.prototype.slice.call(arguments, 1));
+        if (options.hasOwnProperty(validators.arg)) {
+            args = [value, options[validators.arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
         var error = validator.apply(validators, args);
@@ -760,25 +759,25 @@ Validators.prototype.add = function (name, validator) {
     var _this = this;
 
     if (typeof validator === 'string') {
-        this[name] = function () /*value, arg, options*/{
+        _this[name] = function () /*value, arg, options*/{
             return _this[validator].apply({ alias: name, _this: _this }, arguments);
         };
     } else {
         var validators = validator instanceof Array ? validator : [validator];
 
-        this[name] = function (value /*arg, options*/) {
+        _this[name] = function (value /*arg, options*/) {
             var options = void 0;
             var args = Array.prototype.slice.call(arguments, 2);
+
+            _this = this && this._this || _this;
 
             if (arguments[1] === undefined || {}.toString.call(arguments[1]) === '[object Object]') {
                 options = arguments[1] || {};
             } else {
                 options = arguments[2] || {};
-                options[this.arg] = arguments[1];
+                options[_this.arg] = arguments[1];
                 args.shift();
             }
-
-            _this = this._this || _this;
 
             for (var i = 0; i < validators.length; i++) {
                 var base = validators[i];
@@ -804,7 +803,7 @@ Validators.prototype.add = function (name, validator) {
         };
     }
 
-    return this;
+    return _this;
 };
 
 /**

@@ -65,8 +65,8 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 ### Validators:
 
-- **custom** - uses custom validator from options (don't use `arg`)
-  * validate (`Function`) - Custom function which get `value` and `options` and return result of validation
+- **custom** - uses custom validator from options
+  * arg (`Function`) - Custom function which get `value` and `options` and return result of validation (message or undefined)
 
 - **required | presence | empty** - validates that the value isn't empty.
 

@@ -1,9 +1,9 @@
 /* Validators */
 
 module.exports = {
-    custom: function(value, options) {
-        if (typeof options.validate === 'function') {
-            return options.validate(value, options);
+    custom: function(value, arg, options) {
+        if (typeof arg === 'function') {
+            return arg(value, options);
         }
     },
 

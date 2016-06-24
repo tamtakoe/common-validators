@@ -9,16 +9,7 @@ const validators = require('../src/common-validators');
 // console.log('===', validators.pattern('abcd', /ah/g));
 // console.log('===', validators.minDate(new Date(0), {comparedValue: new Date(1000000000000), parse: function(v) {return v}}));
 
-describe('custom', function() {
-    const options = {
-        myTrue: true,
-        validate: function(value, options) {
-            if (value !== options.myTrue) {
-                return 'not my true'
-            }
-        }
-    };
-
+describe('test', function() {
     // it('test minLengthStrict valid', function() {
     //     expect(validators.minLengthStrict('aaa', 2)).to.be.undefined;
     // });
