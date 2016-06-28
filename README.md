@@ -105,13 +105,18 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **max** - value is less then maximum
   * arg (`Number`) - maximum
+  * inclusive (`Boolean`) - inclusive arg. `true` by default
 
 - **min** - value is more then minimum
   * arg (`Number`) - minimum
+  * inclusive (`Boolean`) - inclusive arg. `true` by default
 
-- **range** - value is in the range from minimum to maximum (including)
+- **range** - value is in the range from minimum to maximum
   * from (`Number`) - minimum. Error: `range.many`
   * to (`Number`) - maximum. Error: `range.less`
+  * inclusive (`Boolean`) - inclusive from and to. `true` by default
+  * inclusiveFrom (`Boolean`) - inclusive from. `true` by default
+  * inclusiveTo (`Boolean`) - inclusive to. `true` by default
 
 - **odd** - value is odd
 
@@ -193,6 +198,11 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 
 - **url** - value is URL
   * allowLocal (`Boolean`) - allows local hostnames such as 10.0.1.1 or localhost
+
+- **ipAddress** - value is IP address or hostname
+  * ipv4 (`Boolean`) - value is IPv4 address. `true` by default
+  * ipv6 (`Boolean`) - value is IPv6 address. `true` by default
+  * hostname (`Boolean`) - value is hostname (RFC 1123). `true` by default
 
 
 ## Tests
