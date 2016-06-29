@@ -1,7 +1,7 @@
 {
   "name": "common-validators",
   "description": "Library with common validators",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "author": {
     "name": "Oleg Istomin",
     "email": "tamtakoe@gmail.com"
