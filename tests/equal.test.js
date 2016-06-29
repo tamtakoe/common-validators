@@ -9,19 +9,19 @@ describe('equal', function() {
     });
 
     it('undefined equals undefined', function() {
-        expect(validators.equal(undefined, undefined)).to.be.undefined;
+        expect(validators.equal(undefined, {arg: undefined})).to.be.undefined;
     });
 
     it('null equals null', function() {
-        expect(validators.equal(null, null)).to.be.undefined;
+        expect(validators.equal(null, {arg: null})).to.be.undefined;
     });
 
     it('true equals true', function() {
-        expect(validators.equal(true, true)).to.be.undefined;
+        expect(validators.equal(true, {arg: true})).to.be.undefined;
     });
 
     it('false equals false', function() {
-        expect(validators.equal(false, false)).to.be.undefined;
+        expect(validators.equal(false, {arg: false})).to.be.undefined;
     });
 
     it('str equals str', function() {
@@ -37,11 +37,11 @@ describe('equal', function() {
     });
 
     it('1 equals true in none strict mode', function() {
-        expect(validators.equal(1, true, {strict: false})).to.be.undefined;
+        expect(validators.equal(1, {arg: true, strict: false})).to.be.undefined;
     });
 
     it('0 equals false in none strict mode', function() {
-        expect(validators.equal(0, false, {strict: false})).to.be.undefined;
+        expect(validators.equal(0, {arg: false, strict: false})).to.be.undefined;
     });
 
     it('number equals "number" in none strict mode', function() {

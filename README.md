@@ -50,7 +50,8 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **value** (`Any`) - Validated value
 
-- **arg** (`Any`) - Value for comparison. Can not be an object or undefined. User can set it as `options.arg`.
+- **arg** (`Any`) - Value for comparison. Have to exist and can not be an object or true.
+                    User can set it as `options.arg`.
                     If you use 'arg' in your validator you must be sure that user will specify this value
 
 - **options** (`Object`) - Options
@@ -93,7 +94,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 #### *Equality (valid if value is empty)*
 
 - **equal** - value is equal to specified value (deep equal for objects)
-  * arg (`Any`) - specified value
+  * arg (`Any`) - specified value. Notice! If you use 'arg' as argument it need to exist and not to be object or true
   * strict (`Boolean`) - Use strict comparison (===). `true` by default
 
 - **confirm** - option in object is equal to other option in the same object. Value need to be an object

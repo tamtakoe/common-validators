@@ -689,6 +689,10 @@ var hiddenPropertySettings = {
     configurable: false,
     writable: true
 };
+var RESULT_HANDLER = 'resultHandler';
+var EXCEPTION_HANDLER = 'exceptionHandler';
+var ERROR_FORMAT = 'errorFormat';
+var MESSAGE = 'message';
 
 /**
  * Add extra advantages to validator
@@ -701,7 +705,8 @@ var hiddenPropertySettings = {
  */
 function validatorWrapper(validators, name, validator) {
     return function (value, options) {
-        var args = arguments;
+        var error = void 0,
+            args = arguments;
         var alias = this && this.alias;
         var validatorObj = validators[name];
         var validatorAliasObj = alias ? validators[alias] : {};
@@ -716,16 +721,30 @@ function validatorWrapper(validators, name, validator) {
             args = [value, options[validators.arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
-        var error = validator.apply(validators, args);
+        try {
+            var resultHandler = validatorObj[RESULT_HANDLER] || validatorAliasObj[RESULT_HANDLER] || validators[RESULT_HANDLER];
+
+            error = resultHandler(validator.apply(validators, args));
+        } catch (err) {
+            var exceptionHandler = validatorObj[EXCEPTION_HANDLER] || validatorAliasObj[EXCEPTION_HANDLER] || validators[EXCEPTION_HANDLER];
+
+            if (typeof exceptionHandler === 'function') {
+                error = exceptionHandler(err);
+            } else {
+                throw err;
+            }
+        }
 
         if (error) {
             var _ret = function () {
-                if (options.message) {
-                    error = options.message;
+                var message = options[MESSAGE] || validatorObj[MESSAGE] || validatorAliasObj[MESSAGE];
+
+                if (message) {
+                    error = message;
                 }
 
-                var formattedErrorMessage = validators.formatMessage(error, Object.assign({ value: value }, options));
-                var format = validatorObj.errorFormat || validatorAliasObj.errorFormat || validators.errorFormat;
+                var formattedErrorMessage = validators.formatMessage(error, Object.assign({ validator: alias || name, value: value }, options));
+                var format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
 
                 if (format) {
                     if (typeof formattedErrorMessage === 'string') {
@@ -786,16 +805,21 @@ function formatStr(str, values) {
 /**
  * Validators constructor
  *
- * @param {Object}   [options]
- * @param {Object}     [errorFormat] - format of validators result
- * @param {Function}   [formatStr] - for format message strings with patterns
+ * @param {Object}          [params]
+ * @param {Object}            [errorFormat] - format of validators result
+ * @param {Function}          [formatStr] - for format message strings with patterns
+ * @param {Function}          [resultHandler] - handle result of validation
+ * @param {Function|String}   [exceptionHandler] - handle JS exceptions
+ * @param {String}            [arg] - name of compared value
  *
  * @constructor
  */
-function Validators(options) {
+function Validators(params) {
     Object.defineProperties(this, {
         errorFormat: hiddenPropertySettings,
         formatStr: hiddenPropertySettings,
+        resultHandler: hiddenPropertySettings,
+        exceptionHandler: hiddenPropertySettings,
         arg: hiddenPropertySettings
     });
 
@@ -805,19 +829,26 @@ function Validators(options) {
         $options: true,
         $origin: true
     };
-
     this.formatStr = formatStr;
-
+    this.resultHandler = function (result) {
+        return result;
+    };
+    this.exceptionHandler = function (err) {
+        return err;
+    };
     this.arg = 'arg';
 
-    Object.assign(this, options);
+    Object.assign(this, params);
 }
 
 /**
  * @param {String} name of validator
  * @param {Function|String|Array} validator, alias or validators array
+ * @param {Object} params
+ *
+ * @returns {Validators} Validators instance
  */
-Validators.prototype.add = function (name, validator) {
+Validators.prototype.add = function (name, validator, params) {
     var _this = this;
 
     if (typeof validator === 'string') {
@@ -830,14 +861,17 @@ Validators.prototype.add = function (name, validator) {
         _this[name] = function (value /*arg, options*/) {
             var options = void 0;
             var args = Array.prototype.slice.call(arguments, 2);
+            var arg1 = arguments[1];
 
             _this = this && this._this || _this;
 
-            if (arguments[1] === undefined || {}.toString.call(arguments[1]) === '[object Object]') {
-                options = arguments[1] || {};
+            if (!arg1 && arg1 !== 0 && arg1 !== '' || arg1 === true) {
+                options = {};
+            } else if ({}.toString.call(arg1) === '[object Object]') {
+                options = arg1;
             } else {
                 options = arguments[2] || {};
-                options[_this.arg] = arguments[1];
+                options[_this.arg] = arg1;
                 args.shift();
             }
 
@@ -852,8 +886,8 @@ Validators.prototype.add = function (name, validator) {
                         validator = _this[base];break;
 
                     case 'object':
-                        validator = _this[base.validator];
-                        options = Object.assign({}, options, base.options);
+                        validator = _this[base[0]];
+                        options = Object.assign({}, options, base[1]);
                 }
 
                 var error = validator.apply(this, [value, options].concat(args));
@@ -865,17 +899,22 @@ Validators.prototype.add = function (name, validator) {
         };
     }
 
+    Object.assign(_this[name], params);
+
     return _this;
 };
 
 /**
  * @param {Object} validatorsObj. F.e. {validator1: validator1Fn, validator2: validator2Fn, ...}
+ * @param {Object} params for every validator
+ *
+ * @returns {Validators} Validators instance
  */
-Validators.prototype.load = function (validatorsObj) {
+Validators.prototype.load = function (validatorsObj, params) {
     var _this2 = this;
 
     Object.keys(validatorsObj).forEach(function (key) {
-        return _this2.add(key, validatorsObj[key]);
+        return _this2.add(key, validatorsObj[key], params);
     });
 
     return this;
@@ -897,19 +936,18 @@ Validators.prototype.formatMessage = function (message, values) {
     }
 
     if ((typeof message === 'undefined' ? 'undefined' : _typeof(message)) === 'object') {
-        var _ret2 = function () {
-            var formattedMessage = {};
+        var formattedMessage = {};
 
-            Object.keys(message).forEach(function (key) {
-                return formattedMessage[_this3.formatStr(key, values)] = _this3.formatStr(message[key], values);
-            });
+        Object.keys(message).forEach(function (key) {
+            return formattedMessage[_this3.formatStr(key, values)] = _this3.formatStr(message[key], values);
+        });
 
-            return {
-                v: formattedMessage
-            };
-        }();
+        if (message[MESSAGE]) {
+            //Show not enumerable message of JS exception
+            formattedMessage[MESSAGE] = this.formatStr(message[MESSAGE], values);
+        }
 
-        if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+        return formattedMessage;
     }
 
     return this.formatStr(message, values);
