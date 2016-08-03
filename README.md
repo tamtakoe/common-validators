@@ -212,16 +212,16 @@ You also can set fileList to `options.files`. It is useful for input with type="
 - **accept** - every file hase allowed type (accept="image/jpeg,image/png,.webp,video/*"). You can use mime types or extensions
 
 - **minFileSize** - size of every file is more then minimum
-* arg (`Number`) - minimum
+* arg (`Number`) - minimum in bytes
 
 - **maxFileSize** - size of every file is less then maximum
-* arg (`Number`) - maximum
+* arg (`Number`) - maximum in bytes
 
 - **minFileSizeAll** - size of all files is more then minimum
-* arg (`Number`) - minimum
+* arg (`Number`) - minimum in bytes
 
 - **maxFileSizeAll** - size of all files is less then maximum
-* arg (`Number`) - maximum
+* arg (`Number`) - maximum in bytes
 
 
 ## Tests
