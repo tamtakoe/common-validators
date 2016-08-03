@@ -753,6 +753,10 @@ function objEqual(a, b, strict) {
 
     return (typeof a === 'undefined' ? 'undefined' : _typeof(a)) === (typeof b === 'undefined' ? 'undefined' : _typeof(b));
 }
+
+function toArray(obj) {
+    return Array.prototype.slice.call(obj);
+}
 },{}],2:[function(require,module,exports){
 'use strict';
 

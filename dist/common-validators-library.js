@@ -753,5 +753,9 @@ function objEqual(a, b, strict) {
 
     return (typeof a === 'undefined' ? 'undefined' : _typeof(a)) === (typeof b === 'undefined' ? 'undefined' : _typeof(b));
 }
+
+function toArray(obj) {
+    return Array.prototype.slice.call(obj);
+}
 },{}]},{},[1])(1)
 });

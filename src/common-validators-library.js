@@ -757,3 +757,7 @@ function objEqual(a, b, strict) {
 
     return typeof a === typeof b;
 }
+
+function toArray(obj) {
+    return Array.prototype.slice.call(obj);
+}
