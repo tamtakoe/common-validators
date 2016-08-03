@@ -162,7 +162,7 @@ module.exports = {
         var inclusive = options.inclusive || options.inclusive === undefined;
 
         if (isNumber(value) && !isEmpty(value) && (inclusive ? value < arg : value <= arg)) {
-            return 'Is too short (minimum is %{arg})';
+            return 'Is too small (minimum is %{arg})';
         }
     },
 
@@ -204,6 +204,12 @@ module.exports = {
             return 'Must be divisible by %{arg}';
         }
     },
+
+    // minWords: function () {
+    //     if ((isString(value) && !isEmpty(value) && value.length > arg) {
+    //         return 'Is too long (maximum is %{arg})';
+    //     }
+    // },
 
     stringOrArray: function stringOrArray(value) {
         if (!isString(value) && !isArray(value)) {
@@ -496,6 +502,79 @@ module.exports = {
                 return 'Ivalid IP address or hostname';
             }
         }
+    },
+
+    //File
+    accept: function accept(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files)) {
+            var _ret = function () {
+                var filesList = toArray(files);
+                var allowedTypes = (arg || '').split(',').map(function (type) {
+                    return type.trim().replace('*', '');
+                });
+                var isError = allowedTypes.some(function (type) {
+                    if (type[0] === '.') {
+                        //extension
+                        return filesList.map(function (file) {
+                            return (file.name || '').split('.').pop();
+                        }).some(function (ext) {
+                            return !ext || '.' + ext !== type;
+                        });
+                    } else {
+                        //mime type
+                        return filesList.some(function (file) {
+                            return (file.type || '').indexOf(type) === -1;
+                        });
+                    }
+                });
+
+                if (isError) {
+                    return {
+                        v: 'Incorrect type of file (allowed %{arg})'
+                    };
+                }
+            }();
+
+            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+        }
+    },
+    minFileSize: function minFileSize(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).some(function (file) {
+            return file.size < arg;
+        })) {
+            return 'File size is too small (minimum is %{arg})';
+        }
+    },
+    maxFileSize: function maxFileSize(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).some(function (file) {
+            return file.size > arg;
+        })) {
+            return 'File size is too large (maximum is %{arg})';
+        }
+    },
+    minFileSizeAll: function minFileSizeAll(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).reduce(function (prev, curr) {
+            return (prev.size || prev) + curr.size;
+        }) < arg) {
+            return 'Files size is too small (minimum is %{arg})';
+        }
+    },
+    maxFileSizeAll: function maxFileSizeAll(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).reduce(function (prev, curr) {
+            return (prev.size || prev) + curr.size;
+        }) > arg) {
+            return 'Files size is too large (maximum is %{arg})';
+        }
     }
 };
 
@@ -534,6 +613,10 @@ function isPlainObject(value) {
 
 function isArray(value) {
     return {}.toString.call(value) === '[object Array]';
+}
+
+function isFileList(value) {
+    return {}.toString.call(value) === '[object FileList]';
 }
 
 // Simply checks if the object is an instance of a date
@@ -759,13 +842,13 @@ function validatorWrapper(validators, name, validator) {
                                 format[key] = options[key];
                             }
                         });
-                        delete format.$options;
                     }
+                    delete format.$options;
 
                     if (format.$origin) {
                         format = Object.assign({}, format, formattedErrorMessage);
-                        delete format.$origin;
                     }
+                    delete format.$origin;
 
                     return {
                         v: validators.formatMessage(format, Object.assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
@@ -800,6 +883,17 @@ function formatStr(str, values) {
     return str.replace(FORMAT_REGEXP, function (m0, m1, m2) {
         return m1 === '%' ? "%{" + m2 + "}" : values[m2];
     });
+}
+
+/**
+ * Check that value is plain object
+ *
+ * @param {Any} value
+ *
+ * @returns {Boolean}
+ */
+function isPlainObject(value) {
+    return {}.toString.call(value) === '[object Object]';
 }
 
 /**
@@ -850,29 +944,28 @@ function Validators(params) {
  */
 Validators.prototype.add = function (name, validator, params) {
     var _this = this;
+    var validators = validator instanceof Array ? validator : [validator];
+    var validate = void 0;
 
     if (typeof validator === 'string') {
-        _this[name] = function () /*value, arg, options*/{
+        validate = function validate() /*value, arg, options*/{
             return _this[validator].apply({ alias: name, _this: _this }, arguments);
         };
     } else {
-        var validators = validator instanceof Array ? validator : [validator];
-
-        _this[name] = function (value /*arg, options*/) {
-            var options = void 0;
+        validate = function validate(value /*arg, options*/) {
             var args = Array.prototype.slice.call(arguments, 2);
             var arg1 = arguments[1];
+            var arg2 = arguments[2];
+            var _this2 = this && this._this || _this;
+            var options = isPlainObject(arg2) ? arg2 : {};
 
-            _this = this && this._this || _this;
-
-            if (!arg1 && arg1 !== 0 && arg1 !== '' || arg1 === true) {
-                options = {};
-            } else if ({}.toString.call(arg1) === '[object Object]') {
-                options = arg1;
-            } else {
-                options = arguments[2] || {};
-                options[_this.arg] = arg1;
-                args.shift();
+            if (arg1 != null && typeof arg1 !== 'boolean') {
+                if (isPlainObject(arg1)) {
+                    options = arg1;
+                } else {
+                    options[_this2.arg] = arg1;
+                    args.shift();
+                }
             }
 
             for (var i = 0; i < validators.length; i++) {
@@ -880,13 +973,13 @@ Validators.prototype.add = function (name, validator, params) {
 
                 switch (typeof base === 'undefined' ? 'undefined' : _typeof(base)) {
                     case 'function':
-                        validator = validatorWrapper(_this, name, base);break;
+                        validator = validatorWrapper(_this2, name, base);break;
 
                     case 'string':
-                        validator = _this[base];break;
+                        validator = _this2[base];break;
 
                     case 'object':
-                        validator = _this[base[0]];
+                        validator = _this2[base[0]];
                         options = Object.assign({}, options, base[1]);
                 }
 
@@ -899,7 +992,17 @@ Validators.prototype.add = function (name, validator, params) {
         };
     }
 
-    Object.assign(_this[name], params);
+    Object.assign(validate, params);
+
+    validate.curry = function () /*arg, options*/{
+        var _arguments = arguments;
+        //Partial application
+        return function (value) {
+            return validate.apply(_this, [value].concat(Array.prototype.slice.call(_arguments)));
+        };
+    };
+
+    _this[name] = validate;
 
     return _this;
 };
@@ -911,10 +1014,10 @@ Validators.prototype.add = function (name, validator, params) {
  * @returns {Validators} Validators instance
  */
 Validators.prototype.load = function (validatorsObj, params) {
-    var _this2 = this;
+    var _this3 = this;
 
     Object.keys(validatorsObj).forEach(function (key) {
-        return _this2.add(key, validatorsObj[key], params);
+        return _this3.add(key, validatorsObj[key], params);
     });
 
     return this;
@@ -929,7 +1032,7 @@ Validators.prototype.load = function (validatorsObj, params) {
  * @returns {String|Object} formatted string or object
  */
 Validators.prototype.formatMessage = function (message, values) {
-    var _this3 = this;
+    var _this4 = this;
 
     if (typeof message === 'function') {
         message = message(values.value, values);
@@ -939,7 +1042,7 @@ Validators.prototype.formatMessage = function (message, values) {
         var formattedMessage = {};
 
         Object.keys(message).forEach(function (key) {
-            return formattedMessage[_this3.formatStr(key, values)] = _this3.formatStr(message[key], values);
+            return formattedMessage[_this4.formatStr(key, values)] = _this4.formatStr(message[key], values);
         });
 
         if (message[MESSAGE]) {

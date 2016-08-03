@@ -157,7 +157,7 @@ module.exports = {
         var inclusive = options.inclusive || options.inclusive === undefined;
 
         if (isNumber(value) && !isEmpty(value) && (inclusive ? value < arg : value <= arg)) {
-            return 'Is too short (minimum is %{arg})';
+            return 'Is too small (minimum is %{arg})';
         }
     },
 
@@ -199,6 +199,12 @@ module.exports = {
             return 'Must be divisible by %{arg}';
         }
     },
+
+    // minWords: function () {
+    //     if ((isString(value) && !isEmpty(value) && value.length > arg) {
+    //         return 'Is too long (maximum is %{arg})';
+    //     }
+    // },
     
 
     stringOrArray: function(value) {
@@ -514,6 +520,62 @@ module.exports = {
                 return 'Ivalid IP address or hostname';
             }
         }
+    },
+
+    //File
+    accept(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files)) {
+            const filesList = toArray(files);
+            const allowedTypes = (arg || '').split(',').map(type => type.trim().replace('*', ''));
+            const isError = allowedTypes.some(type => {
+                if (type[0] === '.') {
+                    //extension
+                    return filesList.map(file => (file.name || '').split('.').pop()).some(ext => !ext || ('.' + ext) !== type);
+
+                } else {
+                    //mime type
+                    return filesList.some(file => (file.type || '').indexOf(type) === -1);
+                }
+            });
+
+            if (isError) {
+                return 'Incorrect type of file (allowed %{arg})';
+            }
+        }
+    },
+    
+    minFileSize(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).some(file => file.size < arg)) {
+            return 'File size is too small (minimum is %{arg})';
+        }
+    },
+
+    maxFileSize(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).some(file => file.size > arg)) {
+            return 'File size is too large (maximum is %{arg})';
+        }
+    },
+
+    minFileSizeAll(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) < arg) {
+            return 'Files size is too small (minimum is %{arg})';
+        }
+    },
+
+    maxFileSizeAll(files, arg, options) {
+        files = options.files || files;
+
+        if (isFileList(files) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) > arg) {
+            return 'Files size is too large (maximum is %{arg})';
+        }
     }
 };
 
@@ -553,6 +615,10 @@ function isPlainObject(value) {
 
 function isArray(value) {
     return {}.toString.call(value) === '[object Array]';
+}
+
+function isFileList(value) {
+    return {}.toString.call(value) === '[object FileList]';
 }
 
 // Simply checks if the object is an instance of a date

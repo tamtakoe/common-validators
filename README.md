@@ -94,7 +94,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 #### *Equality (valid if value is empty)*
 
 - **equal** - value is equal to specified value (deep equal for objects)
-  * arg (`Any`) - specified value. Notice! If you use 'arg' as argument it need to exist and not to be object or true
+  * arg (`Any`) - specified value. Notice! If you use 'arg' as argument it need to exist and not to be object or boolean
   * strict (`Boolean`) - Use strict comparison (===). `true` by default
 
 - **confirm** - option in object is equal to other option in the same object. Value need to be an object
@@ -204,6 +204,24 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * ipv4 (`Boolean`) - value is IPv4 address. `true` by default
   * ipv6 (`Boolean`) - value is IPv6 address. `true` by default
   * hostname (`Boolean`) - value is hostname (RFC 1123). `true` by default
+
+
+#### *Files* (valid if value is not FileList or empty)
+You also can set fileList to `options.files`. It is useful for input with type="file" validation, when you have file path in event.target.value (set it as value) and fileList in event.target.files (set it as options.files)
+
+- **accept** - every file hase allowed type (accept="image/jpeg,image/png,.webp,video/*"). You can use mime types or extensions
+
+- **minFileSize** - size of every file is more then minimum
+* arg (`Number`) - minimum
+
+- **maxFileSize** - size of every file is less then maximum
+* arg (`Number`) - maximum
+
+- **minFileSizeAll** - size of all files is more then minimum
+* arg (`Number`) - minimum
+
+- **maxFileSizeAll** - size of all files is less then maximum
+* arg (`Number`) - maximum
 
 
 ## Tests
