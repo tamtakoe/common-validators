@@ -508,19 +508,19 @@ module.exports = {
     accept: function accept(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files)) {
+        if (isFileList(files) || isArray(files)) {
             var _ret = function () {
                 var filesList = toArray(files);
                 var allowedTypes = (arg || '').split(',').map(function (type) {
                     return type.trim().replace('*', '');
                 });
-                var isError = allowedTypes.some(function (type) {
+                var isError = allowedTypes.every(function (type) {
                     if (type[0] === '.') {
                         //extension
                         return filesList.map(function (file) {
                             return (file.name || '').split('.').pop();
                         }).some(function (ext) {
-                            return !ext || '.' + ext !== type;
+                            return !ext || ('.' + ext).toLowerCase() !== type;
                         });
                     } else {
                         //mime type
@@ -543,7 +543,7 @@ module.exports = {
     minFileSize: function minFileSize(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).some(function (file) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).some(function (file) {
             return file.size < arg;
         })) {
             return 'File size is too small (minimum is %{arg})';
@@ -552,7 +552,7 @@ module.exports = {
     maxFileSize: function maxFileSize(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).some(function (file) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).some(function (file) {
             return file.size > arg;
         })) {
             return 'File size is too large (maximum is %{arg})';
@@ -561,7 +561,7 @@ module.exports = {
     minFileSizeAll: function minFileSizeAll(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).reduce(function (prev, curr) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).reduce(function (prev, curr) {
             return (prev.size || prev) + curr.size;
         }) < arg) {
             return 'Files size is too small (minimum is %{arg})';
@@ -570,7 +570,7 @@ module.exports = {
     maxFileSizeAll: function maxFileSizeAll(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).reduce(function (prev, curr) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).reduce(function (prev, curr) {
             return (prev.size || prev) + curr.size;
         }) > arg) {
             return 'Files size is too large (maximum is %{arg})';
