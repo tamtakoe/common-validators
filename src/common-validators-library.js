@@ -550,7 +550,7 @@ module.exports = {
         files = options.files || files;
 
         if ((isFileList(files) || isArray(files)) && toArray(files).some(file => file.size < arg)) {
-            return 'File size is too small (minimum is %{arg})';
+            return 'File size is too small (minimum is ' + formatBytes(arg) + ')';
         }
     },
 
@@ -558,7 +558,7 @@ module.exports = {
         files = options.files || files;
 
         if ((isFileList(files) || isArray(files)) && toArray(files).some(file => file.size > arg)) {
-            return 'File size is too large (maximum is %{arg})';
+            return 'File size is too large (maximum is ' + formatBytes(arg) + ')';
         }
     },
 
@@ -566,7 +566,7 @@ module.exports = {
         files = options.files || files;
 
         if ((isFileList(files) || isArray(files)) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) < arg) {
-            return 'Files size is too small (minimum is %{arg})';
+            return 'Files size is too small (minimum is ' + formatBytes(arg) + ')';
         }
     },
 
@@ -574,7 +574,7 @@ module.exports = {
         files = options.files || files;
 
         if ((isFileList(files) || isArray(files)) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) > arg) {
-            return 'Files size is too large (maximum is %{arg})';
+            return 'Files size is too large (maximum is ' + formatBytes(arg) + ')';
         }
     }
 };
@@ -761,3 +761,14 @@ function objEqual(a, b, strict) {
 function toArray(obj) {
     return Array.prototype.slice.call(obj);
 }
+
+function formatUnits(value, divider, fractionDigits, units) {
+    var exp = Math.round(Math.log(value)/Math.log(divider));
+    var num = Number((value/Math.pow(divider, exp)).toFixed(fractionDigits));
+    return num + ' ' + units[exp];
+}
+
+function formatBytes(value) {
+    return formatUnits(value, 1024, 1, ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB']);
+}
+
