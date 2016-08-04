@@ -206,7 +206,7 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * hostname (`Boolean`) - value is hostname (RFC 1123). `true` by default
 
 
-#### *Files* (valid if value is not FileList or empty)
+#### *Files* (valid if value is not FileList/Array or empty)
 You also can set fileList to `options.files`. It is useful for input with type="file" validation, when you have file path in event.target.value (set it as value) and fileList in event.target.files (set it as options.files)
 
 - **accept** - every file hase allowed type (accept="image/jpeg,image/png,.webp,video/*"). You can use mime types or extensions

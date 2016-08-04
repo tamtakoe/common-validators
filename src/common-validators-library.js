@@ -526,13 +526,13 @@ module.exports = {
     accept(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files)) {
+        if (isFileList(files) || isArray(files)) {
             const filesList = toArray(files);
             const allowedTypes = (arg || '').split(',').map(type => type.trim().replace('*', ''));
-            const isError = allowedTypes.some(type => {
+            const isError = allowedTypes.every(type => {
                 if (type[0] === '.') {
                     //extension
-                    return filesList.map(file => (file.name || '').split('.').pop()).some(ext => !ext || ('.' + ext) !== type);
+                    return filesList.map(file => (file.name || '').split('.').pop()).some(ext => !ext || ('.' + ext).toLowerCase() !== type);
 
                 } else {
                     //mime type
@@ -549,7 +549,7 @@ module.exports = {
     minFileSize(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).some(file => file.size < arg)) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).some(file => file.size < arg)) {
             return 'File size is too small (minimum is %{arg})';
         }
     },
@@ -557,7 +557,7 @@ module.exports = {
     maxFileSize(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).some(file => file.size > arg)) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).some(file => file.size > arg)) {
             return 'File size is too large (maximum is %{arg})';
         }
     },
@@ -565,7 +565,7 @@ module.exports = {
     minFileSizeAll(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) < arg) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) < arg) {
             return 'Files size is too small (minimum is %{arg})';
         }
     },
@@ -573,7 +573,7 @@ module.exports = {
     maxFileSizeAll(files, arg, options) {
         files = options.files || files;
 
-        if (isFileList(files) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) > arg) {
+        if ((isFileList(files) || isArray(files)) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) > arg) {
             return 'Files size is too large (maximum is %{arg})';
         }
     }
