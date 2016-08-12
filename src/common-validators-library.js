@@ -576,6 +576,23 @@ module.exports = {
         if ((isFileList(files) || isArray(files)) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) > arg) {
             return 'Files size is too large (maximum is ' + formatBytes(arg) + ')';
         }
+    },
+
+    minFileNameLength(files, arg, options) {
+        files = options.files || files;
+
+        if ((isFileList(files) || isArray(files))
+            && toArray(files).some(function (file) { return file.name.length < arg; })) {
+            return 'File name is too short (minimum is %{arg})';
+        }
+    },
+    maxFileNameLength(files, arg, options) {
+        files = options.files || files;
+
+        if ((isFileList(files) || isArray(files))
+            && toArray(files).some(function (file) { return file.name.length > arg; })) {
+            return 'File name is too long (maximum is %{arg})';
+        }
     }
 };
 

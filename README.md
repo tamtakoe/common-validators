@@ -223,6 +223,12 @@ You also can set fileList to `options.files`. It is useful for input with type="
 - **maxFileSizeAll** - size of all files is less then maximum
 * arg (`Number`) - maximum in bytes
 
+- **minFileNameLength** - name of every file is more then minimum
+* arg (`Number`) - minimum in bytes
+
+- **maxFileNameLength** - name of every file is less then maximum
+* arg (`Number`) - maximum in bytes
+
 
 ## Tests
 
