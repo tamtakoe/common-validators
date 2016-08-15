@@ -593,6 +593,13 @@ module.exports = {
             && toArray(files).some(function (file) { return file.name.length > arg; })) {
             return 'File name is too long (maximum is %{arg})';
         }
+    },
+
+    //Test
+    alwaysValid() {},
+
+    alwaysInvalid() {
+        return 'Any value is invalid';
     }
 };
 

@@ -230,6 +230,13 @@ You also can set fileList to `options.files`. It is useful for input with type="
 * arg (`Number`) - maximum in bytes
 
 
+#### *Tests* (for debugging)
+
+- **alwaysValid** - every value is valid
+
+- **alwaysInvalid** - every value is invalid
+
+
 ## Tests
 
 ```sh
