@@ -49,6 +49,10 @@ describe('equal', function() {
     });
 
     it('not equal', function() {
-        expect(validators.equal(true, false)).to.have.property('error');
+        try {
+            validators.equal(true, false)
+        } catch(e) {
+            expect(e).to.be.instanceof(TypeError);
+        }
     });
 });
