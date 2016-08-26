@@ -8,78 +8,31 @@ module.exports = {
     },
 
     //Isn't empty
-    empty: function(value) {
+    required: function(value) {
+        if (!exists(value)) {
+            return "Is required";
+        }
+    },
+    presence: 'required',
+
+    notEmpty: function(value) {
         if (isEmpty(value)) {
             return "Can't be blank";
         }
     },
-    presence: 'empty',
-    required: 'empty',
 
     //Equality
     equal: function(value, arg, options) {
-        // var errorEmpty = this.empty(value);
-        //
-        // if (options.allowEmpty && errorEmpty) {
-        //     return errorEmpty;
-        // }
-        //
-        // if (!errorEmpty && !deepEqual(value, arg, options.strict)) {
-        //     return 'must be equal %{arg}';
-        // }
-
-        if (!isEmpty(value) && !deepEqual(value, arg, options.strict)) {
+        if (exists(value) && !deepEqual(value, arg, options.strict)) {
             return 'Must be equal %{arg}';
         }
     },
 
     confirm: function(value, options) {
-        if (!isEmpty(value) && isPlainObject(value) && !deepEqual(value[options.key], value[options.comparedKey], options.strict)) {
+        if (exists(value) && !deepEqual(toObject(value)[options.key], toObject(value)[options.comparedKey], options.strict)) {
             return '%{option} must be equal %{comparedOption}';
         }
     },
-
-    // confirm1: function(value, comparedKey, options, context, allObject, path) {
-    //    
-    //     if (context) {
-    //         if (value !== context[comparedKey]) {
-    //             return 'invalid';
-    //         }
-    //
-    //         'abc'
-    //         '$.abc'
-    //     }
-    //   
-    //
-    //     var object = {
-    //         a: {
-    //             b: {
-    //                 c: 1
-    //             }
-    //         },
-    //         c: 1
-    //     };
-    //
-    //
-    //     1, { comparedKey: 'a.b.c' }, object, object, ['c']
-    //     1, { comparedKey: 'a.b.c' }, 'c', object, globalOptions
-    //
-    //
-    //
-    //
-    //     validate.single("foo@bar.com", {email: {strict: true}});
-    //     validate.single("foo@bar.com", {presence: true});
-    //
-    //
-    //     options = {
-    //         key: 'c',
-    //         comparedKey: 'a.b.c'
-    //     };
-    //
-    //     if (!isEmpty(value) && isPlainObject(value) && !deepEqual(value[options.key], value[options.comparedKey], options.strict)) {
-    //         return '%{option} must be equal %{comparedOption}';
-    //     }
-    // },
 
     //Types
     object: function(value) {
@@ -94,6 +47,12 @@ module.exports = {
         }
     },
 
+    string: function(value) {
+        if (!isString(value)) {
+            return 'Must be a string';
+        }
+    },
+    
     number: function(value) {
         if (!isNumber(value)) {
             return 'Must be a number';
@@ -103,12 +62,6 @@ module.exports = {
     integer: function(value) {
         if (!isInteger(value)) {
             return 'Must be an integer';
-        }
-    },
-
-    string: function(value) {
-        if (!isString(value)) {
-            return 'Must be a string';
         }
     },
 
@@ -124,58 +77,48 @@ module.exports = {
         }
     },
 
+    function: function(value) {
+        if (!isFunction(value)) {
+            return 'Must be a function';
+        }
+    },
+
     null: function(value) {
         if (value !== null) {
             return 'Must be a null';
         }
     },
 
+    type: function(value, arg) {
+        if (typeof value !== arg) {
+            return 'Must be of type %{arg}';
+        }
+    },
+
     //Number
     max: function(value, arg, options) {
-        var inclusive = options.inclusive || options.inclusive === undefined;
-        // var errorEmpty = this.empty(value);
-        // var errorType = this.number(value);
-        //
-        // if (!options.allowEmpty && errorEmpty) {
-        //     return errorEmpty;
-        // }
-        //
-        // if (!options.allowIncorrectType && errorType) {
-        //     return errorType;
-        // }
-        //
-        // if (!errorType && !errorEmpty && value > arg) {
-        //     return 'is too large (maximum is %{arg})';
-        // }
-
-        if (isNumber(value) && !isEmpty(value) && (inclusive ? value > arg : value >= arg)) {
-            return 'Is too large (maximum is %{arg})';
+        if (exists(value) && !(options.notInclusive ? toNumber(value) < arg : toNumber(value) <= arg)) {
+            return options.notInclusive ? 'Must be less %{arg}' : 'Must be less or equal %{arg}';
         }
     },
 
     min: function(value, arg, options) {
-        var inclusive = options.inclusive || options.inclusive === undefined;
-
-        if (isNumber(value) && !isEmpty(value) && (inclusive ? value < arg : value <= arg)) {
-            return 'Is too small (minimum is %{arg})';
+        if (exists(value) && !(options.notInclusive ? toNumber(value) > arg : toNumber(value) >= arg)) {
+            return options.notInclusive ? 'Must be more %{arg}' : 'Must be more or equal %{arg}';
         }
     },
 
     range: function(value, options) {
-        var inclusive     = options.inclusive || options.inclusive === undefined;
-        var fromInclusive = (options.fromInclusive || options.fromInclusive === undefined) && inclusive;
-        var toInclusive   = (options.toInclusive || options.toInclusive === undefined) && inclusive;
-        
-        if (isNumber(value) && !isEmpty(value)) {
-            if (fromInclusive ? value < options.from : value <= options.from) {
+        if (exists(value)) {
+            if (!((options.fromNotInclusive || options.notInclusive) ? toNumber(value) > options.from : toNumber(value) >= options.from)) {
                 return {
                     error: 'range.less',
-                    message: options.lessMessage || 'Is too less (should be from %{from} to %{to})'
+                    message: options.lessMessage || 'Must be from %{from} to %{to}'
                 }
-            } else if (toInclusive ? value > options.to : value >= options.to) {
+            } else if (!((options.toNotInclusive || options.notInclusive) ? toNumber(value) < options.to : toNumber(value) <= options.to)) {
                 return {
                     error: 'range.many',
-                    message: options.manyMessage || 'Is too many (should be from %{from} to %{to})'
+                    message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
             }
         }
@@ -183,77 +126,53 @@ module.exports = {
     in: 'range',
 
     odd: function(value) {
-        if (isNumber(value) && !isEmpty(value) && value % 2 !== 1) {
+        if (exists(value) && toNumber(value) % 2 !== 1) {
             return 'Must be odd';
         }
     },
 
     even: function(value) {
-        if (isNumber(value) && !isEmpty(value) && value % 2 !== 0) {
+        if (exists(value) && toNumber(value) % 2 !== 0) {
             return 'Must be even';
         }
     },
 
     divisible: function(value, arg) {
-        if (isNumber(value) && !isEmpty(value) && value % arg !== 0) {
+        if (exists(value) && toNumber(value) % arg !== 0) {
             return 'Must be divisible by %{arg}';
         }
     },
 
-    // minWords: function () {
-    //     if ((isString(value) && !isEmpty(value) && value.length > arg) {
-    //         return 'Is too long (maximum is %{arg})';
-    //     }
-    // },
-    
-
-    stringOrArray: function(value) {
-        if (!isString(value) && !isArray(value)) {
-            return 'Must be a string or an array';
-        }
-    },
-
-    //Length
-    minLengthStrict: ['required', 'stringOrArray', {validator: 'custom', options: {}}, function(value, arg) {
-        if (value.length < arg) {
-            // return 'is too short (minimum is %{arg})';
-            return {
-                error: 'aaadddd',
-                message: 'ololo'
-            };
-        }
-    }],
-
     maxLength: function(value, arg) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length > arg) {
-            return 'Is too long (maximum is %{arg})';
+        if (exists(value) && toArray(value).length > arg) {
+            return 'Length must be less or equal %{arg}';
         }
     },
 
     minLength: function(value, arg) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length < arg) {
-            return 'Is too short (minimum is %{arg})';
+        if (exists(value) && toArray(value).length < arg) {
+            return 'Length must be more or equal %{arg}';
         }
     },
 
     equalLength: function(value, arg) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value) && value.length === arg) {
-            return 'Has an incorrect length (must be equal %{arg})';
+        if (exists(value) && toArray(value).length !== arg) {
+            return 'Length must be equal %{arg}';
         }
     },
 
     rangeLength: function(value, options) {
-        if ((isString(value) || isArray(value)) && !isEmpty(value)) {
-            if (value > options.to) {
+        if (exists(value)) {
+            if (toArray(value).length > options.to) {
                 return {
                     error: 'rangeLength.many',
-                    message: options.manyMessage || 'Is too long (should be from %{from} to %{to})'
+                    message: options.manyMessage || 'Length must be from %{from} to %{to}'
                 }
 
-            } else if (value < options.from) {
+            } else if (toArray(value).length < options.from) {
                 return {
                     error: 'rangeLength.less',
-                    message: options.lessMessage || 'Is too short (should be from %{from} to %{to})'
+                    message: options.lessMessage || 'Length must be from %{from} to %{to}'
                 }
             }
 
@@ -263,7 +182,7 @@ module.exports = {
 
     //RegExp
     pattern: function(value, arg) {
-        if (isString(value) && !isEmpty(value) && !(new RegExp(arg)).test(value)) {
+        if (exists(value) && !(new RegExp(arg)).test(toString(value))) {
             return 'Does not match the pattern %{arg}';
         }
     },
@@ -271,103 +190,81 @@ module.exports = {
 
     //White and black list
     inclusion: function(value, arg) {
-        if (!isEmpty(value) && !contains(arg, value)) {
+        if (exists(value) && !contains(arg, value)) {
             return '%{value} is not allowed';
         }
     },
 
     exclusion: function(value, arg) {
-        if (!isEmpty(value) && contains(arg, value, true)) {
+        if (exists(value) && contains(arg, value, true)) {
             return '%{value} is restricted';
         }
     },
 
     //Date and time
-    maxDateTime: function(value, arg) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const comparedDateTime = new Date(arg);
-
-            if (dateTime > comparedDateTime) {
-                return 'Must be earlier than %{arg}';
-            }
+    maxDateTime: function(value, arg, options) {
+        if (exists(value) && !(options.notInclusive ? toDate(value) < toDate(arg) : toDate(value) <= toDate(arg))) {
+            return 'Must be earlier than %{arg}';
         }
     },
 
-    maxDate: function(value, arg) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const comparedDateTime = new Date(arg);
-            const date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+    maxDate: function(value, arg, options) {
+        const dateTime = toDate(value);
+        const argDateTime = toDate(arg);
+        const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+        const argDate = toDate(argDateTime.getFullYear(), argDateTime.getMonth(), argDateTime.getDate());
 
-            if (date > comparedDateTime) {
-                return 'Must be earlier than %{arg}';
-            }
+        if (exists(value) && !(options.notInclusive ? date < argDate : date <= argDate)) {
+            return 'Must be earlier than %{arg}';
         }
     },
 
-    minDateTime: function(value, arg) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const comparedDateTime = new Date(arg);
-
-            if (dateTime < comparedDateTime) {
-                return 'Must be no earlier than %{arg}';
-            }
+    minDateTime: function(value, arg, options) {
+        if (exists(value) && !(options.notInclusive ? toDate(value) > toDate(arg) : toDate(value) >= toDate(arg))) {
+            return 'Must be no earlier than %{arg}';
         }
     },
 
-    minDate: function(value, arg) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const comparedDateTime = new Date(arg);
-            const date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+    minDate: function(value, arg, options) {
+        const dateTime = toDate(value);
+        const argDateTime = toDate(arg);
+        const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+        const argDate = toDate(argDateTime.getFullYear(), argDateTime.getMonth(), argDateTime.getDate());
 
-            if (date < comparedDateTime) {
-                return 'Must be no earlier than %{arg}';
-            }
+        if (exists(value) && !(options.notInclusive ? date > argDate : date >= argDate)) {
+            return 'Must be no earlier than %{arg}';
         }
     },
 
     equalDateTime: function(value, arg) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const comparedDateTime = new Date(arg);
-
-            if (dateTime === comparedDateTime) {
-                return 'Must be equal %{arg}';
-            }
+        if (exists(value) && toDate(value).valueOf() !== toDate(arg).valueOf()) {
+            return 'Must be equal %{arg}';
         }
     },
 
     equalDate: function(value, arg) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const comparedDateTime = new Date(arg);
-            const date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+        const dateTime = toDate(value);
+        const argDateTime = toDate(arg);
+        const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+        const argDate = toDate(argDateTime.getFullYear(), argDateTime.getMonth(), argDateTime.getDate());
 
-            if (date === comparedDateTime) {
-                return 'Must be equal %{arg}';
-            }
+        if (exists(value) && date.valueOf() !== argDate.valueOf()) {
+            return 'Must be equal %{arg}';
         }
     },
 
     rangeDateTime: function(value, options) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const fromDateTime = new Date(options.from);
-            const toDateTime = new Date(options.to);
-
-            if (dateTime > toDateTime) {
+        if (exists(value)) {
+            if (!((options.fromNotInclusive || options.notInclusive) ? toDate(value) > toDate(options.from) : toDate(value) >= toDate(options.from))) {
                 return {
                     error: 'rangeDateTime.many',
-                    message: options.manyMessage || 'Is too late (must be from ' + fromDateTime.toString() + ' to ' + toDateTime.toString() + ')'
+                    message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
 
-            } else if (dateTime < fromDateTime) {
+            } else if (!((options.toNotInclusive || options.notInclusive) ? toDate(value) < toDate(options.to) : toDate(value) <= toDate(options.to))) {
                 return {
                     error: 'rangeDateTime.less',
-                    message: options.lessMessage || 'Is too early (must be from ' + fromDateTime.toString() + ' to ' + toDateTime.toString() + ')'
+                    message: options.lessMessage || 'Must be from %{from} to %{to}'
                 }
             }
         }
@@ -375,22 +272,24 @@ module.exports = {
     inDateTimes: 'rangeDateTime',
 
     rangeDate: function(value, options) {
-        if (isDateTime(value)) {
-            const dateTime = new Date(value);
-            const fromDateTime = new Date(options.from);
-            const toDateTime = new Date(options.to);
-            const date = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+        if (exists(value)) {
+            const dateTime = toDate(value);
+            const dateTimeFrom = toDate(options.from);
+            const dateTimeTo = toDate(options.to);
+            const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+            const dateFrom = toDate(dateTimeFrom.getFullYear(), dateTimeFrom.getMonth(), dateTimeFrom.getDate());
+            const dateTo = toDate(dateTimeTo.getFullYear(), dateTimeTo.getMonth(), dateTimeTo.getDate());
 
-            if (date > toDateTime) {
+            if (!((options.fromNotInclusive || options.notInclusive) ? date > dateFrom : date >= dateFrom)) {
                 return {
                     error: 'rangeDate.many',
-                    message: options.manyMessage || 'Is too late (must be from ' + fromDateTime.toDateString() + ' to ' + toDateTime.toDateString() + ')'
+                    message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
 
-            } else if (date < fromDateTime) {
+            } else if (!((options.toNotInclusive || options.notInclusive) ? date < dateTo : date <= dateTo)) {
                 return {
                     error: 'rangeDate.less',
-                    message: options.lessMessage || 'Is too early (must be from ' + fromDateTime.toDateString() + ' to ' + toDateTime.toDateString() + ')'
+                    message: options.lessMessage || 'Must be from %{from} to %{to}'
                 }
             }
         }
@@ -401,22 +300,22 @@ module.exports = {
     email: function(value) {
         var PATTERN = /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i;
 
-        if (isString(value) && !isEmpty(value) && !PATTERN.exec(value)) {
-            return 'is not a valid email';
+        if (exists(value) && !PATTERN.exec(toString(value))) {
+            return 'Must be a valid email';
         }
     },
 
     // A URL validator that is used to validate URLs with the ability to
     // restrict schemes and some domains.
     url: function(value, options) {
-        if (isString(value) && !isEmpty(value)) {
-            var schemes = options.schemes || ['http', 'https'];
+        if (exists(value)) {
+            var protocols = options.protocols || ['http', 'https'];
 
             // https://gist.github.com/dperini/729294
             var regex =
                 '^' +
                 // schemes
-                '(?:(?:' + schemes.join('|') + '):\\/\\/)' +
+                '(?:(?:' + protocols.join('|') + '):\\/\\/)' +
                 // credentials
                 '(?:\\S+(?::\\S*)?@)?';
 
@@ -460,18 +359,14 @@ module.exports = {
 
             var PATTERN = new RegExp(regex, 'i');
 
-            if (!PATTERN.exec(value)) {
+            if (!PATTERN.exec(toString(value))) {
                 return 'is not a valid url';
             }
         }
     },
 
     ipAddress: function(value, options) {
-        if (isString(value) && !isEmpty(value)) {
-            // var IPV4_REGEXP = /^\s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\s*$/;
-            // var IPV6_REGEXP = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
-            // var HOSTNAME_REGEXP = /^\s*((?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*\.?)\s*$/; //RFC_1123
-
+        if (exists(value)) {
             var IPV4_REGEXP = /^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$/;
             var IPV6_REGEXP = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
             var HOSTNAME_REGEXP = /^\s*((?=.{1,255}$)(?=.*[A-Za-z].*)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*)\s*$/;
@@ -480,7 +375,7 @@ module.exports = {
 
             var isError = !Object.keys(regExps).some(key => {
                 if (options[key] || options[key] === undefined) {
-                    return regExps[key].test(value);
+                    return regExps[key].test(toString(value));
                 }
             });
 
@@ -492,106 +387,106 @@ module.exports = {
                 if (ipv4 && !ipv6 && !hostname) {
                     return {
                         error: 'ip.v4',
-                        message: options.ipv4Message || 'Invalid IPv4 address'
+                        message: options.ipv4Message || 'Must be a valid IPv4 address'
                     }
                 }
 
                 if (ipv6 && !ipv4 && !hostname) {
                     return {
                         error: 'ip.v6',
-                        message: options.ipv6Message || 'Invalid IPv6 address'
+                        message: options.ipv6Message || 'Must be a valid IPv6 address'
                     }
                 }
 
                 if (hostname && !ipv4 && !ipv6) {
                     return {
                         error: 'ip.hostname',
-                        message: options.hostnameMessage || 'Invalid hostname'
+                        message: options.hostnameMessage || 'Must be a valid hostname'
                     }
                 }
 
                 if (ipv6 && ipv4 && !hostname) {
                     return {
                         error: 'ip.address',
-                        message: options.addressMessage || 'Invalid IP address'
+                        message: options.addressMessage || 'Must be a valid IP address'
                     }
                 }
 
-                return 'Ivalid IP address or hostname';
+                return 'Must be a valid IP address or hostname';
             }
         }
     },
 
     //File
     accept(files, arg, options) {
-        files = options.files || files;
+        files = toArray(options.files || files);
 
-        if (isFileList(files) || isArray(files)) {
-            const filesList = toArray(files);
+        if (exists(files)) {
             const allowedTypes = (arg || '').split(',').map(type => type.trim().replace('*', ''));
-            const isError = allowedTypes.every(type => {
-                if (type[0] === '.') {
-                    //extension
-                    return filesList.map(file => (file.name || '').split('.').pop()).some(ext => !ext || ('.' + ext).toLowerCase() !== type);
 
-                } else {
-                    //mime type
-                    return filesList.some(file => (file.type || '').indexOf(type) === -1);
-                }
+            const isError = files.some(file => {
+                return allowedTypes.every(type => {
+                    if (type[0] === '.') {
+                        //extension
+                        return '.' + ((file.name || '').split('.').pop() || '').toLowerCase() !== type;
+
+                    } else {
+                        //mime type
+                        return (file.type || '').indexOf(type) === -1;
+                    }
+                });
             });
 
             if (isError) {
-                return 'Incorrect type of file (allowed %{arg})';
+                return 'File must be a %{arg}';
             }
         }
     },
     
     minFileSize(files, arg, options) {
-        files = options.files || files;
+        files = toArray(options.files || files);
 
-        if ((isFileList(files) || isArray(files)) && toArray(files).some(file => file.size < arg)) {
-            return 'File size is too small (minimum is ' + formatBytes(arg) + ')';
+        if (exists(files) && !files.every(file => toNumber(file.size) >= arg)) {
+            return 'File size must be more or equal %{arg} bytes';
         }
     },
 
     maxFileSize(files, arg, options) {
-        files = options.files || files;
+        files = toArray(options.files || files);
 
-        if ((isFileList(files) || isArray(files)) && toArray(files).some(file => file.size > arg)) {
-            return 'File size is too large (maximum is ' + formatBytes(arg) + ')';
+        if (exists(files) && !files.every(file => toNumber(file.size) <= arg)) {
+            return 'File size must be less or equal %{arg} bytes';
         }
     },
 
     minFileSizeAll(files, arg, options) {
-        files = options.files || files;
+        files = toArray(options.files || files);
 
-        if ((isFileList(files) || isArray(files)) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) < arg) {
-            return 'Files size is too small (minimum is ' + formatBytes(arg) + ')';
+        if (exists(files) && !(files.reduce((prev, curr) => (toNumber(prev.size || prev)) + toNumber(curr.size)) >= arg)) {
+            return 'Total files size must be more or equal %{arg} bytes';
         }
     },
 
     maxFileSizeAll(files, arg, options) {
-        files = options.files || files;
+        files = toArray(options.files || files);
 
-        if ((isFileList(files) || isArray(files)) && toArray(files).reduce((prev, curr) => (prev.size || prev) + curr.size) > arg) {
-            return 'Files size is too large (maximum is ' + formatBytes(arg) + ')';
+        if (exists(files) && !(files.reduce((prev, curr) => (toNumber(prev.size || prev)) + toNumber(curr.size)) <= arg)) {
+            return 'Total files size must be less or equal %{arg} bytes';
         }
     },
 
     minFileNameLength(files, arg, options) {
-        files = options.files || files;
+        files = toArray(options.files || files);
 
-        if ((isFileList(files) || isArray(files))
-            && toArray(files).some(function (file) { return file.name.length < arg; })) {
-            return 'File name is too short (minimum is %{arg})';
+        if (exists(files) && files.some(function (file) { return toArray(file.name).length < arg; })) {
+            return 'File name length must be more or equal %{arg}';
         }
     },
     maxFileNameLength(files, arg, options) {
-        files = options.files || files;
+        files = toArray(options.files || files);
 
-        if ((isFileList(files) || isArray(files))
-            && toArray(files).some(function (file) { return file.name.length > arg; })) {
-            return 'File name is too long (maximum is %{arg})';
+        if (exists(files) && files.some(function (file) { return toArray(file.name).length > arg; })) {
+            return 'File name length must be less or equal %{arg}';
         }
     },
 
@@ -605,125 +500,98 @@ module.exports = {
 
 
 /* Utils */
-
-// Checks if the value is a number. This function does not consider NaN a
-// number like many other `isNumber` functions do.
 function isNumber(value) {
     return typeof value === 'number' && !isNaN(value);
 }
 
-// Returns false if the object is not a function
 function isFunction(value) {
     return typeof value === 'function';
 }
 
-// A simple check to verify that the value is an integer. Uses `isNumber`
-// and a simple modulo check.
 function isInteger(value) {
     return isNumber(value) && value % 1 === 0;
 }
 
-// Checks if the value is a boolean
 function isBoolean(value) {
     return typeof value === 'boolean';
 }
 
-// Uses the `Object` function to check if the given argument is an object.
-function isObject(obj) {
-    return obj === Object(obj);
-}
-
-function isPlainObject(value) {
-    return {}.toString.call(value) === '[object Object]';
-}
-
 function isArray(value) {
-    return {}.toString.call(value) === '[object Array]';
-}
-
-function isFileList(value) {
-    return {}.toString.call(value) === '[object FileList]';
-}
-
-// Simply checks if the object is an instance of a date
-function isDate(obj) {
-    return obj instanceof Date;
+    return Array.isArray(value);
 }
 
 function isDateTime(value) {
-    return !isNaN(Date.parse(value));
+    return !isArray(value) && !isNaN(Date.parse(value));
 }
-
 
 function isString(value) {
     return typeof value === 'string';
 }
 
-// Returns false if the object is `null` of `undefined`
-function isDefined(obj) {
-    return obj !== null && obj !== undefined;
+function isObject(obj) {
+    return obj === Object(obj);
 }
 
-function isEmpty(value) {
-    var attr;
+//This is no full plain-object checking, but it is better for validation when you need to know
+//that object is no array or hasn't common type. Generally you prefer to consider instance of custom class as object
+function isPlainObject(value) {
+    return typeof value == 'object' && value !== null && !isArray(value)
+        && !(value instanceof RegExp)
+        && !(value instanceof Date)
+        && !(value instanceof Error)
+        && !(value instanceof Number)
+        && !(value instanceof String)
+        && !(value instanceof Boolean)
+        && (typeof value.toDate !== 'function' || value.propertyIsEnumerable('toDate')); //Moment.js date
+}
 
-    // Null and undefined are empty
-    if (!isDefined(value)) {
+// Returns false if the object is `null` of `undefined`
+function isDefined(obj) {
+    return obj != null;
+}
+
+//Note! undefined is not empty
+function isEmpty(value) {
+    if (value === null || typeof value === 'number' && isNaN(value)) {
         return true;
     }
 
-    // functions are non empty
-    if (isFunction(value)) {
-        return false;
-    }
-
-    // Whitespace only strings are empty
     if (isString(value)) {
-        return /^\s*$/.test(value); //empty string test
+        return /^\s*$/.test(value); //Whitespace only strings are empty
     }
 
-    // For arrays we use the length property
     if (isArray(value)) {
         return value.length === 0;
     }
 
-    // Dates have no attributes but aren't empty
-    if (isDate(value)) {
-        return false;
-    }
-
-    // If we find at least one property we consider it non empty
-    if (isObject(value)) {
-        for (attr in value) {
+    if (isPlainObject(value)) { //If we find at least one property we consider it non empty
+        for (var attr in value) {
             return false;
         }
         return true;
     }
 
-    return false;
+    return value instanceof Date && isNaN(Date.parse(value)); //Invalid date is empty
+
+    //Boolean, Date, RegExp, Error, Number, Function etc. are not empty
 }
 
-function contains(obj, value, some) {
+function exists(value) {
+    return value !== undefined && !isEmpty(value)
+}
+
+function contains(collection, value, some) {
     some = some ? 'some' : 'every';
 
-    if (!isDefined(obj)) {
+    if (!isDefined(collection)) {
         return false;
     }
-    if (isArray(value)) {
-        return value[some](val => contains(obj, val))
+
+    if (typeof value === 'object') {
+        return toArray(value)[some](val => contains(collection, val));
     }
-    if (isPlainObject(value)) {
-        return Object.keys(value)[some](key => {
-            if (isArray(obj)) {
-                return obj.indexOf(key) !== -1;
-            }
-            return obj[key] === value[key];
-        })
-    }
-    if (isArray(obj)) {
-        return obj.indexOf(value) !== -1;
-    }
-    return value in obj;
+
+    return toArray(collection).indexOf(value) !== -1;
 }
 
 function deepEqual(actual, expected, strict) {
@@ -782,17 +650,66 @@ function objEqual(a, b, strict) {
     return typeof a === typeof b;
 }
 
-function toArray(obj) {
-    return Array.prototype.slice.call(obj);
+// Type conversion
+/** Used to compose unicode character classes. */
+var rsAstralRange = '\\ud800-\\udfff',
+    rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+    rsComboSymbolsRange = '\\u20d0-\\u20f0',
+    rsVarRange = '\\ufe0e\\ufe0f';
+
+/** Used to compose unicode capture groups. */
+var rsAstral = '[' + rsAstralRange + ']',
+    rsCombo = '[' + rsComboMarksRange + rsComboSymbolsRange + ']',
+    rsFitz = '\\ud83c[\\udffb-\\udfff]',
+    rsModifier = '(?:' + rsCombo + '|' + rsFitz + ')',
+    rsNonAstral = '[^' + rsAstralRange + ']',
+    rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
+    rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
+    rsZWJ = '\\u200d';
+
+/** Used to compose unicode regexes. */
+var reOptMod = rsModifier + '?',
+    rsOptVar = '[' + rsVarRange + ']?',
+    rsOptJoin = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVar + reOptMod + ')*',
+    rsSeq = rsOptVar + reOptMod + rsOptJoin,
+    rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?', rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')';
+
+var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + ']');
+var reUnicode = RegExp(rsFitz + '(?=' + rsFitz + ')|' + rsSymbol + rsSeq, 'g');
+
+function toArray(value) {
+    if (!value) {
+        return [];
+    }
+
+    if (isArray(value)) {
+        return value;
+    }
+
+    if (isString(value)) {
+        return reHasUnicode.test(value) ? string.match(reUnicode) || [] : value.split('');
+    }
+
+    if (Array.from && (value.length || value instanceof Map || value instanceof Set || value[Symbol && Symbol.iterator])) {
+        return Array.from(value);
+    }
+
+    return Object.keys(value);
 }
 
-function formatUnits(value, divider, fractionDigits, units) {
-    var exp = Math.round(Math.log(value)/Math.log(divider));
-    var num = Number((value/Math.pow(divider, exp)).toFixed(fractionDigits));
-    return num + ' ' + units[exp];
+function toNumber(value) {
+    return Number(value)
 }
 
-function formatBytes(value) {
-    return formatUnits(value, 1024, 1, ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB']);
+function toString(value) {
+    return value && !isObject(value) ? String(value) : '';
 }
 
+function toObject(value) {
+    return isObject(value) ? value : {};
+}
+
+function toDate(value) {
+    return isArray(value) ? new Date('') : //Invalid date
+        new (Function.prototype.bind.apply(Date, [null].concat(Array.prototype.slice.call(arguments))))(); //new Date(...arguments) in ES6
+}

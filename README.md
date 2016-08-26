@@ -1,16 +1,19 @@
 # common-validators
-Library with common validators
+Library with common validators.
+Base logic: any empty value is valid (except required-validator); values are converted to a suitable format
 
 [![NPM version](https://img.shields.io/npm/v/common-validators.svg)](https://npmjs.org/package/common-validators)
 [![Build status](https://img.shields.io/travis/tamtakoe/common-validators.svg)](https://travis-ci.org/tamtakoe/common-validators)
 
 **Note:** This module works in browsers and Node.js >= 4.0
 
+
 ## Installation
 
 ```sh
 npm install common-validators
 ```
+
 
 ## Usage
 
@@ -37,9 +40,10 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 */
 ```
 
+
 ## API
 
-### Validators.add, Validators.load
+### Validators.add
 
 Use this methods for adding custom validators in simple format (see 'lib/common-validators-library.js').
 See more in [validators-constructor documentation](https://www.npmjs.com/package/validators-constructor).
@@ -69,7 +73,9 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 - **custom** - uses custom validator from options
   * arg (`Function`) - Custom function which get `value` and `options` and return result of validation (message or undefined)
 
-- **required | presence | empty** - validates that the value isn't empty.
+- **required | presence** - validates that the value isn't `undefined`, `null`, `NaN`, empty or whitespace only string, empty array or object
+
+- **notEmpty** - likes `required` but `undefined` is valid value. It is useful for PATCH-requests
 
 
 #### *Types*
@@ -78,20 +84,25 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **array** - value is array
 
+- **string** - value is string
+
 - **number** - value is number
 
 - **integer** - value is integer
-
-- **string** - value is string
 
 - **date** - value is date
 
 - **boolean** - value is boolean
 
+- **function** - value is function
+
 - **null** - value is null
 
+- **type** - value has specified type
+  * arg (`String`) - type for `typeof` comparison
 
-#### *Equality (valid if value is empty)*
+
+#### *Equality* (valid if value is empty)
 
 - **equal** - value is equal to specified value (deep equal for objects)
   * arg (`Any`) - specified value. Notice! If you use 'arg' as argument it need to exist and not to be object or boolean
@@ -102,22 +113,31 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * comparedKey (`String`) - second key in value
   * strict (`Boolean`) - Use strict comparison (===). `true` by default
 
-#### *Numbers* (valid if value is not number or empty)
+  ```js
+  confirm({
+    name: 'User', password: '123', confirmedPassword: '123'
+  }, {
+    key: 'password', comparedKey: 'confirmedPassword'
+  }); //valid
+  ```
+
+
+#### *Numbers* (valid if value is empty, value is converted to the number)
 
 - **max** - value is less then maximum
   * arg (`Number`) - maximum
-  * inclusive (`Boolean`) - inclusive arg. `true` by default
+  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **min** - value is more then minimum
   * arg (`Number`) - minimum
-  * inclusive (`Boolean`) - inclusive arg. `true` by default
+  * inclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **range** - value is in the range from minimum to maximum
   * from (`Number`) - minimum. Error: `range.many`
   * to (`Number`) - maximum. Error: `range.less`
-  * inclusive (`Boolean`) - inclusive from and to. `true` by default
-  * inclusiveFrom (`Boolean`) - inclusive from. `true` by default
-  * inclusiveTo (`Boolean`) - inclusive to. `true` by default
+  * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
+  * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
+  * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **odd** - value is odd
 
@@ -127,7 +147,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * arg (`Number`) - divisor
 
 
-#### *Length* (valid if value is not string or not array or empty)
+#### *Length* (valid if value is empty, value is converted to the array)
 
 - **maxLength** - value's length is less then maximum
   * arg (`Number`) - maximum
@@ -143,20 +163,20 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * arg (`Number`) - divisor
 
 
-#### *RegExp* (valid if value is not string or empty)
+#### *RegExp* (valid if value is empty, value is converted to the string)
 
 - **pattern | format** - value matches the pattern
   * arg (`String` or `RegExp`) - pattern
 
 
-#### *White and black list* (valid if value is empty)
+#### *White and black list* (valid if value is empty, value is converted to the array)
 
 - **inclusion** - value is contained in white list. If value is an array or object - every item must to be in the list.
   * arg (`Array` or `Object`) - white list
 
 ```js
 inclusion('a', ['a', 'b', 'c']); //valid
-inclusion('a', {a, 'smth'}); //valid
+inclusion('a', {a: 'smth'}); //valid
 inclusion(['a', 'b'], ['a', 'b', 'c']); //valid
 inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 ```
@@ -164,41 +184,52 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * arg (`Array` or `Object`) - black list
 
 
-#### *Date and time* (valid if value is not valid date)
+#### *Date and time* (valid if value is empty, value is converted to the date)
 
 - **maxDateTime** - value is less then maximum date
   * arg (`Date` or `String` or `Number`) - maximum date
+  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **minDateTime** - value is more then minimum date
   * arg (`Date` or `String` or `Number`) - minimum date
+  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **rangeDateTime** - value is in the range from minimum to maximum dates (including)
   * from (`Date` or `String` or `Number`) - minimum date. Error: `rangeDateTime.many`
   * to (`Date` or `String` or `Number`) - maximum date. Error: `rangeDateTime.less`
+  * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
+  * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
+  * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **equalDateTime** - value is equal specified date
   * arg (`Date` or `String` or `Number`) - specified date
 
 - **maxDate** - value is less then maximum date (time is ignored)
   * arg (`Date` or `String` or `Number`) - maximum date
+  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **minDate** - value is more then minimum date (time is ignored)
   * arg (`Date` or `String` or `Number`) - minimum date
+  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
   * from (`Date` or `String` or `Number`) - minimum date. Error: `rangeDate.many`
   * to (`Date` or `String` or `Number`) - maximum date. Error: `rangeDate.less`
+  * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
+  * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
+  * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **equalDate** - value is equal specified date (time is ignored)
   * arg (`Date` or `String` or `Number`) - specified date
 
 
-#### *Web* (valid if value is not string or empty)
+#### *Web* (valid if value is empty, value is converted to the string)
 
 - **email** - value is email address
 
 - **url** - value is URL
   * allowLocal (`Boolean`) - allows local hostnames such as 10.0.1.1 or localhost
+  * protocols (`Array`) - allows to use different protocols. Default: `['http', 'https']`
 
 - **ipAddress** - value is IP address or hostname
   * ipv4 (`Boolean`) - value is IPv4 address. `true` by default
@@ -206,7 +237,7 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * hostname (`Boolean`) - value is hostname (RFC 1123). `true` by default
 
 
-#### *Files* (valid if value is not FileList/Array or empty)
+#### *Files* (valid if value is empty, value is converted to the array)
 You also can set fileList to `options.files`. It is useful for input with type="file" validation, when you have file path in event.target.value (set it as value) and fileList in event.target.files (set it as options.files)
 
 - **accept** - every file hase allowed type (accept="image/jpeg,image/png,.webp,video/*"). You can use mime types or extensions

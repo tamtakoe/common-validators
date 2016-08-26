@@ -29,7 +29,7 @@
     "README.md"
   ],
   "dependencies": {
-    "validators-constructor": "0.0.17"
+    "validators-constructor": "0.1.1"
   },
   "devDependencies": {
     "babel-cli": "6.9.0",
@@ -37,7 +37,8 @@
     "browserify": "13.0.1",
     "uglify-js": "2.6.2",
     "chai": "3.5.0",
-    "mocha": "2.4.5"
+    "mocha": "2.4.5",
+    "moment": "2.14.1"
   },
   "scripts": {
     "test": "mocha 'tests/**/*.js' --timeout 5000",

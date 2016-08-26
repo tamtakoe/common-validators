@@ -8,10 +8,10 @@ describe('ipAddress', function() {
         expect(validators.ipAddress(undefined)).to.be.undefined;
     });
 
-    it('not string is valid', function() {
-        expect(validators.ipAddress({a: 1})).to.be.undefined;
-        expect(validators.ipAddress(123)).to.be.undefined;
-        expect(validators.ipAddress([1,2,3])).to.be.undefined;
+    it('not string is invalid', function() {
+        expect(validators.ipAddress({a: 1})).to.have.property('error');
+        expect(validators.ipAddress(123)).to.have.property('error');
+        expect(validators.ipAddress([1,2,3])).to.have.property('error');
     });
 
     var values = [
