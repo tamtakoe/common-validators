@@ -209,12 +209,7 @@ module.exports = {
     },
 
     maxDate: function(value, arg, options) {
-        const dateTime = toDate(value);
-        const argDateTime = toDate(arg);
-        const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
-        const argDate = toDate(argDateTime.getFullYear(), argDateTime.getMonth(), argDateTime.getDate());
-
-        if (exists(value) && !(options.notInclusive ? date < argDate : date <= argDate)) {
+        if (exists(value) && !(options.notInclusive ? toDate(value, true) < toDate(arg, true) : toDate(value, true) <= toDate(arg, true))) {
             return 'Must be earlier than %{arg}';
         }
     },
@@ -226,12 +221,7 @@ module.exports = {
     },
 
     minDate: function(value, arg, options) {
-        const dateTime = toDate(value);
-        const argDateTime = toDate(arg);
-        const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
-        const argDate = toDate(argDateTime.getFullYear(), argDateTime.getMonth(), argDateTime.getDate());
-
-        if (exists(value) && !(options.notInclusive ? date > argDate : date >= argDate)) {
+        if (exists(value) && !(options.notInclusive ? toDate(value, true) > toDate(arg, true) : toDate(value, true) >= toDate(arg, true))) {
             return 'Must be no earlier than %{arg}';
         }
     },
@@ -243,12 +233,7 @@ module.exports = {
     },
 
     equalDate: function(value, arg) {
-        const dateTime = toDate(value);
-        const argDateTime = toDate(arg);
-        const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
-        const argDate = toDate(argDateTime.getFullYear(), argDateTime.getMonth(), argDateTime.getDate());
-
-        if (exists(value) && date.valueOf() !== argDate.valueOf()) {
+        if (exists(value) && toDate(value, true).valueOf() !== toDate(arg, true).valueOf()) {
             return 'Must be equal %{arg}';
         }
     },
@@ -273,20 +258,13 @@ module.exports = {
 
     rangeDate: function(value, options) {
         if (exists(value)) {
-            const dateTime = toDate(value);
-            const dateTimeFrom = toDate(options.from);
-            const dateTimeTo = toDate(options.to);
-            const date = toDate(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
-            const dateFrom = toDate(dateTimeFrom.getFullYear(), dateTimeFrom.getMonth(), dateTimeFrom.getDate());
-            const dateTo = toDate(dateTimeTo.getFullYear(), dateTimeTo.getMonth(), dateTimeTo.getDate());
-
-            if (!((options.fromNotInclusive || options.notInclusive) ? date > dateFrom : date >= dateFrom)) {
+            if (!((options.fromNotInclusive || options.notInclusive) ? toDate(value, true) > toDate(options.from, true) : toDate(value, true) >= toDate(options.from, true))) {
                 return {
                     error: 'rangeDate.many',
                     message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
 
-            } else if (!((options.toNotInclusive || options.notInclusive) ? date < dateTo : date <= dateTo)) {
+            } else if (!((options.toNotInclusive || options.notInclusive) ? toDate(value, true) < toDate(options.to, true) : toDate(value, true) <= toDate(options.to, true))) {
                 return {
                     error: 'rangeDate.less',
                     message: options.lessMessage || 'Must be from %{from} to %{to}'
@@ -709,7 +687,50 @@ function toObject(value) {
     return isObject(value) ? value : {};
 }
 
-function toDate(value) {
-    return isArray(value) ? new Date('') : //Invalid date
-        new (Function.prototype.bind.apply(Date, [null].concat(Array.prototype.slice.call(arguments))))(); //new Date(...arguments) in ES6
+function setTimezoneOffset(date) {
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+}
+
+function normalizeDate(date) {
+    if (!date) {
+        return new Date(date);
+    }
+
+    if (arguments.length > 1) {
+        date = Array.prototype.slice.call(arguments);
+    }
+
+    if (Array.isArray(date)) {
+        date = new (Function.prototype.bind.apply(Date, [null].concat(date)))();
+    }
+
+    var jsDate = new Date(date);
+
+    if (typeof date === 'object') { //Native or Moment.js date
+        var momentBaseDate = date.creationData && date.creationData().input;
+
+        if (!(momentBaseDate && typeof momentBaseDate === 'string' && /:.+Z|GMT|[+-]\d\d:\d\d/.test(momentBaseDate))) {
+            setTimezoneOffset(jsDate); //Any data except moment.js date from UTC string (UTC ISO format have to contains time)
+        }
+
+        return jsDate;
+    }
+
+    if (!isNaN(jsDate) && typeof date === 'string') { //ISO or RFC
+        if (date.match(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/) && date.indexOf('GMT') === -1) { //RFC without GMT
+            setTimezoneOffset(jsDate);
+        }
+    } else { //Timestamp
+        jsDate = new Date(Number(String(date).split('.').join('')));
+
+        setTimezoneOffset(jsDate);
+    }
+
+    return jsDate;
+}
+
+function toDate(date, noTime) {
+    date = normalizeDate(date);
+
+    return noTime ? new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) : date;
 }

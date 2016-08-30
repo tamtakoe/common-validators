@@ -12,7 +12,6 @@ describe('maxDateTime', function() {
     it('not date is invalid', function() {
         expect(validators.maxDateTime('abc', new Date(2000, 0, 1, 0, 0, 5, 0))).to.have.property('error');
         expect(validators.maxDateTime({a: 1}, new Date(2000, 0, 1, 0, 0, 5, 0))).to.have.property('error');
-        expect(validators.maxDateTime([1,2,3], new Date(2000, 0, 1, 0, 0, 5, 0))).to.have.property('error');
     });
 
     it('date less then maxDateTime is valid', function() {
@@ -29,6 +28,11 @@ describe('maxDateTime', function() {
 
     it('date equal maxDateTime is invalid if inclusive=false', function() {
         expect(validators.maxDateTime(new Date(2000, 0, 1, 0, 0, 5, 0), new Date(2000, 0, 1, 0, 0, 5, 0), {notInclusive: true})).to.have.property('error');
+    });
+
+    it('date in Array format is correct', function() {
+        expect(validators.maxDateTime([2000, 0, 5, 23, 59, 59, 0], [2000, 0, 5, 23, 59, 59, 0])).to.be.undefined;
+        expect(validators.maxDateTime([2000, 0, 6, 23, 59, 59, 0], [2000, 0, 5, 23, 59, 59, 0])).to.have.property('error');
     });
 
     it('date in GMT format is correct', function() {
