@@ -187,40 +187,40 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 #### *Date and time* (valid if value is empty, value is converted to the date)
 
 - **maxDateTime** - value is less then maximum date
-  * arg (`Date` or `String` or `Number`) - maximum date
+  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date
   * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **minDateTime** - value is more then minimum date
-  * arg (`Date` or `String` or `Number`) - minimum date
+  * arg (`Date`, `String`, `Number`, `Moment`, `Array`) - minimum date
   * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **rangeDateTime** - value is in the range from minimum to maximum dates (including)
-  * from (`Date` or `String` or `Number`) - minimum date. Error: `rangeDateTime.many`
-  * to (`Date` or `String` or `Number`) - maximum date. Error: `rangeDateTime.less`
+  * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDateTime.many`
+  * to (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDateTime.less`
   * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
   * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
   * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **equalDateTime** - value is equal specified date
-  * arg (`Date` or `String` or `Number`) - specified date
+  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
 
 - **maxDate** - value is less then maximum date (time is ignored)
-  * arg (`Date` or `String` or `Number`) - maximum date
+  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date
   * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **minDate** - value is more then minimum date (time is ignored)
-  * arg (`Date` or `String` or `Number`) - minimum date
+  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date
   * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
-  * from (`Date` or `String` or `Number`) - minimum date. Error: `rangeDate.many`
-  * to (`Date` or `String` or `Number`) - maximum date. Error: `rangeDate.less`
+  * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDate.many`
+  * to (`Date`,`String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDate.less`
   * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
   * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
   * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **equalDate** - value is equal specified date (time is ignored)
-  * arg (`Date` or `String` or `Number`) - specified date
+  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
 
 
 #### *Web* (valid if value is empty, value is converted to the string)
