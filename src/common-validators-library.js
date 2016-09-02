@@ -698,7 +698,7 @@ function normalizeDate(date) {
     if (isObject(date)) { //Native or Moment.js date
         var momentBaseDate = date.creationData && date.creationData().input;
 
-        if (!(momentBaseDate && typeof momentBaseDate === 'string' && /:.+Z|GMT|[+-]\d\d:\d\d/.test(momentBaseDate))) {
+        if (!(momentBaseDate && isString(momentBaseDate) && /:.+Z|GMT|[+-]\d\d:\d\d/.test(momentBaseDate))) {
             setTimezoneOffset(jsDate); //Any data except moment.js date from UTC string (UTC ISO format have to contains time)
         }
 
