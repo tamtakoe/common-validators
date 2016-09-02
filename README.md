@@ -40,6 +40,13 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 */
 ```
 
+Many of validators have names common for js, like `required`, `minLength`, etc.
+But if you have some conflicts you can rename any validator:
+
+```js
+validators.minLengthValidator = validators.minLength
+delete validators.minLength
+```
 
 ## API
 
@@ -97,9 +104,6 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 - **function** - value is function
 
 - **null** - value is null
-
-- **type** - value has specified type
-  * arg (`String`) - type for `typeof` comparison
 
 
 #### *Equality* (valid if value is empty)
@@ -165,7 +169,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 #### *RegExp* (valid if value is empty, value is converted to the string)
 
-- **pattern | format** - value matches the pattern
+- **pattern** - value matches the pattern
   * arg (`String` or `RegExp`) - pattern
 
 

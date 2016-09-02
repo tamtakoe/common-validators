@@ -89,12 +89,6 @@ module.exports = {
         }
     },
 
-    type: function(value, arg) {
-        if (typeof value !== arg) {
-            return 'Must be of type %{arg}';
-        }
-    },
-
     //Number
     max: function(value, arg, options) {
         if (exists(value) && !(options.notInclusive ? toNumber(value) < arg : toNumber(value) <= arg)) {
@@ -123,7 +117,6 @@ module.exports = {
             }
         }
     },
-    in: 'range',
 
     odd: function(value) {
         if (exists(value) && toNumber(value) % 2 !== 1) {
@@ -178,7 +171,6 @@ module.exports = {
 
         }
     },
-    inLengths: 'rangeLength',
 
     //RegExp
     pattern: function(value, arg) {
@@ -186,7 +178,6 @@ module.exports = {
             return 'Does not match the pattern %{arg}';
         }
     },
-    format: 'pattern',
 
     //White and black list
     inclusion: function(value, arg) {
@@ -254,7 +245,6 @@ module.exports = {
             }
         }
     },
-    inDateTimes: 'rangeDateTime',
 
     rangeDate: function(value, options) {
         if (exists(value)) {
@@ -272,7 +262,6 @@ module.exports = {
             }
         }
     },
-    inDates: 'rangeDate',
 
     //Web
     email: function(value) {
@@ -700,13 +689,13 @@ function normalizeDate(date) {
         date = Array.prototype.slice.call(arguments);
     }
 
-    if (Array.isArray(date)) {
+    if (isArray(date)) {
         date = new (Function.prototype.bind.apply(Date, [null].concat(date)))();
     }
 
     var jsDate = new Date(date);
 
-    if (typeof date === 'object') { //Native or Moment.js date
+    if (isObject(date)) { //Native or Moment.js date
         var momentBaseDate = date.creationData && date.creationData().input;
 
         if (!(momentBaseDate && typeof momentBaseDate === 'string' && /:.+Z|GMT|[+-]\d\d:\d\d/.test(momentBaseDate))) {
@@ -716,7 +705,7 @@ function normalizeDate(date) {
         return jsDate;
     }
 
-    if (!isNaN(jsDate) && typeof date === 'string') { //ISO or RFC
+    if (!isNaN(jsDate) && isString(date)) { //ISO or RFC
         if (date.match(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/) && date.indexOf('GMT') === -1) { //RFC without GMT
             setTimezoneOffset(jsDate);
         }

@@ -94,12 +94,6 @@ module.exports = {
         }
     },
 
-    type: function type(value, arg) {
-        if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) !== arg) {
-            return 'Must be of type %{arg}';
-        }
-    },
-
     //Number
     max: function max(value, arg, options) {
         if (exists(value) && !(options.notInclusive ? toNumber(value) < arg : toNumber(value) <= arg)) {
@@ -128,7 +122,6 @@ module.exports = {
             }
         }
     },
-    in: 'range',
 
     odd: function odd(value) {
         if (exists(value) && toNumber(value) % 2 !== 1) {
@@ -181,7 +174,6 @@ module.exports = {
             }
         }
     },
-    inLengths: 'rangeLength',
 
     //RegExp
     pattern: function pattern(value, arg) {
@@ -189,7 +181,6 @@ module.exports = {
             return 'Does not match the pattern %{arg}';
         }
     },
-    format: 'pattern',
 
     //White and black list
     inclusion: function inclusion(value, arg) {
@@ -256,7 +247,6 @@ module.exports = {
             }
         }
     },
-    inDateTimes: 'rangeDateTime',
 
     rangeDate: function rangeDate(value, options) {
         if (exists(value)) {
@@ -273,7 +263,6 @@ module.exports = {
             }
         }
     },
-    inDates: 'rangeDate',
 
     //Web
     email: function email(value) {
@@ -689,13 +678,13 @@ function normalizeDate(date) {
         date = Array.prototype.slice.call(arguments);
     }
 
-    if (Array.isArray(date)) {
+    if (isArray(date)) {
         date = new (Function.prototype.bind.apply(Date, [null].concat(date)))();
     }
 
     var jsDate = new Date(date);
 
-    if ((typeof date === 'undefined' ? 'undefined' : _typeof(date)) === 'object') {
+    if (isObject(date)) {
         //Native or Moment.js date
         var momentBaseDate = date.creationData && date.creationData().input;
 
@@ -706,7 +695,7 @@ function normalizeDate(date) {
         return jsDate;
     }
 
-    if (!isNaN(jsDate) && typeof date === 'string') {
+    if (!isNaN(jsDate) && isString(date)) {
         //ISO or RFC
         if (date.match(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/) && date.indexOf('GMT') === -1) {
             //RFC without GMT

@@ -156,20 +156,4 @@ describe('types', function() {
         expect(validators.null(null)).to.be.undefined;
         expect(validators.null(undefined)).to.have.property('error');
     });
-
-    it('value is type', function() { //typeof checking
-        expect(validators.type({}, 'object')).to.be.undefined;
-        expect(validators.type([], 'object')).to.be.undefined;
-        expect(validators.type('', 'string')).to.be.undefined;
-        expect(validators.type(0.1, 'number')).to.be.undefined;
-        expect(validators.type(0, 'number')).to.be.undefined;
-        expect(validators.type(/regExp/, 'object')).to.be.undefined;
-        expect(validators.type(new Date(), 'object')).to.be.undefined;
-        expect(validators.type(new Date('foo'), 'object')).to.be.undefined;
-        expect(validators.type(true, 'boolean')).to.be.undefined;
-        expect(validators.type(false, 'boolean')).to.be.undefined;
-        expect(validators.type(function() {}, 'function')).to.be.undefined;
-        expect(validators.type(null, 'object')).to.be.undefined;
-        expect(validators.type(undefined, 'undefined')).to.be.undefined;
-    });
 });
