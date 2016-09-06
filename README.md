@@ -134,14 +134,14 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **min** - value is more then minimum
   * arg (`Number`) - minimum
-  * inclusive (`Boolean`) - doesn't inclusive arg. `false` by default
+  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
 
 - **range** - value is in the range from minimum to maximum
   * from (`Number`) - minimum. Error: `range.many`
   * to (`Number`) - maximum. Error: `range.less`
-  * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
-  * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
-  * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
+  * notInclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
+  * notInclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
+  * notInclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **odd** - value is odd
 
@@ -201,9 +201,9 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 - **rangeDateTime** - value is in the range from minimum to maximum dates (including)
   * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDateTime.many`
   * to (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDateTime.less`
-  * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
-  * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
-  * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
+  * notInclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
+  * notInclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
+  * notInclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **equalDateTime** - value is equal specified date
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
@@ -219,9 +219,9 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 - **rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
   * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDate.many`
   * to (`Date`,`String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDate.less`
-  * inclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
-  * inclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
-  * inclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
+  * notInclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
+  * notInclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
+  * notInclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
 
 - **equalDate** - value is equal specified date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date

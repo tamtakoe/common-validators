@@ -31,16 +31,16 @@ describe('rangeDate', function() {
         expect(validators.rangeDate(new Date(2000, 0, 3, 23, 59, 59, 0), {from: new Date(2000, 0, 3), to: new Date(2000, 0, 5)})).to.be.undefined;
     });
 
-    it('date equal left end of the range is invalid if fromNotInclusive=true', function() {
-        expect(validators.rangeDate(new Date(2000, 0, 3, 23, 59, 59, 0), {from: new Date(2000, 0, 3), to: new Date(2000, 0, 5), fromNotInclusive: true})).to.have.property('error');
+    it('date equal left end of the range is invalid if notInclusiveFrom=true', function() {
+        expect(validators.rangeDate(new Date(2000, 0, 3, 23, 59, 59, 0), {from: new Date(2000, 0, 3), to: new Date(2000, 0, 5), notInclusiveFrom: true})).to.have.property('error');
     });
 
     it('date equal right end of the range is valid', function() {
         expect(validators.rangeDate(new Date(2000, 0, 5, 23, 59, 59, 0), {from: new Date(2000, 0, 3), to: new Date(2000, 0, 5)})).to.be.undefined;
     });
 
-    it('date equal right end of the range is invalid if toNotInclusive=true', function() {
-        expect(validators.rangeDate(new Date(2000, 0, 5, 23, 59, 59, 0), {from: new Date(2000, 0, 3), to: new Date(2000, 0, 5), toNotInclusive: true})).to.have.property('error');
+    it('date equal right end of the range is invalid if notInclusiveTo=true', function() {
+        expect(validators.rangeDate(new Date(2000, 0, 5, 23, 59, 59, 0), {from: new Date(2000, 0, 3), to: new Date(2000, 0, 5), notInclusiveTo: true})).to.have.property('error');
     });
 
     it('date equal left end of the range is invalid if notInclusive=true', function() {

@@ -30,16 +30,16 @@ describe('range', function() {
         expect(validators.range(3, {from: 3, to: 5})).to.be.undefined;
     });
 
-    it('number equal left end of the range is invalid if fromNotInclusive=true', function() {
-        expect(validators.range(3, {from: 3, to: 5, fromNotInclusive: true})).to.have.property('error');
+    it('number equal left end of the range is invalid if notInclusiveFrom=true', function() {
+        expect(validators.range(3, {from: 3, to: 5, notInclusiveFrom: true})).to.have.property('error');
     });
 
     it('number equal right end of the range is valid', function() {
         expect(validators.range(5, {from: 3, to: 5})).to.be.undefined;
     });
 
-    it('number equal right end of the range is invalid if toNotInclusive=true', function() {
-        expect(validators.range(5, {from: 3, to: 5, toNotInclusive: true})).to.have.property('error');
+    it('number equal right end of the range is invalid if notInclusiveTo=true', function() {
+        expect(validators.range(5, {from: 3, to: 5, notInclusiveTo: true})).to.have.property('error');
     });
 
     it('number equal left end of the range is invalid if notInclusive=true', function() {
