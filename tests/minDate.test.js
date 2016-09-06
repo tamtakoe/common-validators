@@ -49,8 +49,8 @@ describe('minDate', function() {
     });
 
     it('date in time format is correct', function() {
-        expect(validators.minDate(947030399000, 947116800000)).to.have.property('error');
-        expect(validators.minDate(947105999000, 947030400000)).to.be.undefined;
+        expect(validators.minDate(947030399000, 947030400000)).to.have.property('error');
+        expect(validators.minDate(947116799000, 947030400000)).to.be.undefined;
         expect(validators.minDate(947203199000, 947030400000)).to.be.undefined;
     });
 

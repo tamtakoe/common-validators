@@ -46,8 +46,8 @@ describe('maxDateTime', function() {
     });
 
     it('date in time format is correct', function() {
-        expect(validators.maxDateTime(946674004000, 946674005000)).to.be.undefined;
-        expect(validators.maxDateTime(946674006000, 946674005000)).to.have.property('error');
+        expect(validators.maxDateTime(946684804000, 946684805000)).to.be.undefined;
+        expect(validators.maxDateTime(946684806000, 946684805000)).to.have.property('error');
     });
 
     it('date in moment.js format is correct', function() {

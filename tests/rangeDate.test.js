@@ -64,10 +64,9 @@ describe('rangeDate', function() {
     });
 
     it('date in time format is correct', function() {
-        // It works differently on different servers https://travis-ci.org/tamtakoe/common-validators/jobs/156213007
-        // expect(validators.rangeDate(947019599000, {from: 946846800000, to: 947019600000})).to.be.undefined;
-        // expect(validators.rangeDate(946846799000, {from: 946846800000, to: 947019600000})).to.have.property('error');
-        // expect(validators.rangeDate(947192399000, {from: 946846800000, to: 947019600000})).to.have.property('error');
+        expect(validators.rangeDate(947030399000, {from: 946857600000, to: 947030400000})).to.be.undefined;
+        expect(validators.rangeDate(946857599000, {from: 946857600000, to: 947030400000})).to.have.property('error');
+        expect(validators.rangeDate(947203199000, {from: 946857600000, to: 947030400000})).to.have.property('error');
     });
 
     it('date in moment.js format is correct', function() {

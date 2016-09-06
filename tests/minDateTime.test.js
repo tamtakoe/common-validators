@@ -42,8 +42,8 @@ describe('minDateTime', function() {
     });
 
     it('date in time format is correct', function() {
-        expect(validators.minDateTime(946674004000, 946674005000)).to.have.property('error');
-        expect(validators.minDateTime(946674006000, 946674005000)).to.be.undefined;
+        expect(validators.minDateTime(946684804000, 946684805000)).to.have.property('error');
+        expect(validators.minDateTime(946684806000, 946684805000)).to.be.undefined;
     });
 
     it('date in moment.js format is correct', function() {

@@ -50,11 +50,12 @@ describe('equalDate', function() {
     });
 
     it('date in time format is correct', function() {
-        // It works differently on different servers https://travis-ci.org/tamtakoe/common-validators/jobs/156213007
-        // expect(validators.equalDate(947105999000, new Date(2000, 0, 5))).to.be.undefined;
-        // expect(validators.equalDate(947105999000, new Date(2000, 0, 6))).to.have.property('error');
-        // expect(validators.equalDate(947105999000, 947019600000)).to.be.undefined;
-        // expect(validators.equalDate(947105999000, 947106000000)).to.have.property('error');
+        expect(validators.equalDate(947116799000, new Date(2000, 0, 5))).to.be.undefined;
+        expect(validators.equalDate(947116799000, new Date(2000, 0, 6))).to.have.property('error');
+        expect(validators.equalDate(947030400000, new Date(2000, 0, 5))).to.be.undefined;
+        expect(validators.equalDate(947030400000, new Date(2000, 0, 6))).to.have.property('error');
+        expect(validators.equalDate(947116799000, 947030400000)).to.be.undefined;
+        expect(validators.equalDate(947116799000, 947116800000)).to.have.property('error');
     });
 
     it('date in moment.js format is correct', function() {

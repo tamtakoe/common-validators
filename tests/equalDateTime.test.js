@@ -37,9 +37,8 @@ describe('equalDateTime', function() {
     });
 
     it('date in time format is correct', function() {
-        // It works differently on different servers https://travis-ci.org/tamtakoe/common-validators/jobs/156213007
-        // expect(validators.equalDateTime(946674005000, new Date(2000, 0, 1, 0, 0, 5, 0))).to.be.undefined;
-        // expect(validators.equalDateTime(946674006000, new Date(2000, 0, 1, 0, 0, 5, 0))).to.have.property('error');
+        expect(validators.equalDateTime(946684805000, new Date(2000, 0, 1, 0, 0, 5, 0))).to.be.undefined;
+        expect(validators.equalDateTime(946684806000, new Date(2000, 0, 1, 0, 0, 5, 0))).to.have.property('error');
         expect(validators.equalDateTime(946674005000, 946674005000)).to.be.undefined;
         expect(validators.equalDateTime(946674006000, 946674005000)).to.have.property('error');
     });

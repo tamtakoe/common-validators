@@ -49,9 +49,9 @@ describe('maxDate', function() {
     });
 
     it('date in time format is correct', function() {
-        expect(validators.maxDate(947030399000, 947030400000)).to.be.undefined;
-        expect(validators.maxDate(947105999000, 947030400000)).to.be.undefined;
-        expect(validators.maxDate(947203199000, 947030400000)).to.have.property('error');
+        expect(validators.maxDate(947041199000, 947041200000)).to.be.undefined;
+        expect(validators.maxDate(947116799000, 947041200000)).to.be.undefined;
+        expect(validators.maxDate(947213999000, 947041200000)).to.have.property('error');
     });
 
     it('date in moment.js format is correct', function() {

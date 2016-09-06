@@ -1,3 +1,8 @@
+const toDateTime = require('normalize-date');
+function toDate(date) {
+    return toDateTime(date, {noTime: true});
+}
+
 /* Validators */
 
 module.exports = {
@@ -194,50 +199,50 @@ module.exports = {
 
     //Date and time
     maxDateTime: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDate(value) < toDate(arg) : toDate(value) <= toDate(arg))) {
+        if (exists(value) && !(options.notInclusive ? toDateTime(value) < toDateTime(arg) : toDateTime(value) <= toDateTime(arg))) {
             return 'Must be earlier than %{arg}';
         }
     },
 
     maxDate: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDate(value, true) < toDate(arg, true) : toDate(value, true) <= toDate(arg, true))) {
+        if (exists(value) && !(options.notInclusive ? toDate(value) < toDate(arg) : toDate(value) <= toDate(arg))) {
             return 'Must be earlier than %{arg}';
         }
     },
 
     minDateTime: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDate(value) > toDate(arg) : toDate(value) >= toDate(arg))) {
+        if (exists(value) && !(options.notInclusive ? toDateTime(value) > toDateTime(arg) : toDateTime(value) >= toDateTime(arg))) {
             return 'Must be no earlier than %{arg}';
         }
     },
 
     minDate: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDate(value, true) > toDate(arg, true) : toDate(value, true) >= toDate(arg, true))) {
+        if (exists(value) && !(options.notInclusive ? toDate(value) > toDate(arg) : toDate(value) >= toDate(arg))) {
             return 'Must be no earlier than %{arg}';
         }
     },
 
     equalDateTime: function(value, arg) {
-        if (exists(value) && toDate(value).valueOf() !== toDate(arg).valueOf()) {
+        if (exists(value) && toDateTime(value).valueOf() !== toDateTime(arg).valueOf()) {
             return 'Must be equal %{arg}';
         }
     },
 
     equalDate: function(value, arg) {
-        if (exists(value) && toDate(value, true).valueOf() !== toDate(arg, true).valueOf()) {
+        if (exists(value) && toDate(value).valueOf() !== toDate(arg).valueOf()) {
             return 'Must be equal %{arg}';
         }
     },
 
     rangeDateTime: function(value, options) {
         if (exists(value)) {
-            if (!((options.fromNotInclusive || options.notInclusive) ? toDate(value) > toDate(options.from) : toDate(value) >= toDate(options.from))) {
+            if (!((options.fromNotInclusive || options.notInclusive) ? toDateTime(value) > toDateTime(options.from) : toDateTime(value) >= toDateTime(options.from))) {
                 return {
                     error: 'rangeDateTime.many',
                     message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
 
-            } else if (!((options.toNotInclusive || options.notInclusive) ? toDate(value) < toDate(options.to) : toDate(value) <= toDate(options.to))) {
+            } else if (!((options.toNotInclusive || options.notInclusive) ? toDateTime(value) < toDateTime(options.to) : toDateTime(value) <= toDateTime(options.to))) {
                 return {
                     error: 'rangeDateTime.less',
                     message: options.lessMessage || 'Must be from %{from} to %{to}'
@@ -248,13 +253,13 @@ module.exports = {
 
     rangeDate: function(value, options) {
         if (exists(value)) {
-            if (!((options.fromNotInclusive || options.notInclusive) ? toDate(value, true) > toDate(options.from, true) : toDate(value, true) >= toDate(options.from, true))) {
+            if (!((options.fromNotInclusive || options.notInclusive) ? toDate(value) > toDate(options.from) : toDate(value) >= toDate(options.from))) {
                 return {
                     error: 'rangeDate.many',
                     message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
 
-            } else if (!((options.toNotInclusive || options.notInclusive) ? toDate(value, true) < toDate(options.to, true) : toDate(value, true) <= toDate(options.to, true))) {
+            } else if (!((options.toNotInclusive || options.notInclusive) ? toDate(value) < toDate(options.to) : toDate(value) <= toDate(options.to))) {
                 return {
                     error: 'rangeDate.less',
                     message: options.lessMessage || 'Must be from %{from} to %{to}'
@@ -509,7 +514,7 @@ function isPlainObject(value) {
         && !(value instanceof Number)
         && !(value instanceof String)
         && !(value instanceof Boolean)
-        && (typeof value.toDate !== 'function' || value.propertyIsEnumerable('toDate')); //Moment.js date
+        && (typeof value.toDateTime !== 'function' || value.propertyIsEnumerable('toDateTime')); //Moment.js date
 }
 
 // Returns false if the object is `null` of `undefined`
@@ -617,7 +622,6 @@ function objEqual(a, b, strict) {
     return typeof a === typeof b;
 }
 
-// Type conversion
 /** Used to compose unicode character classes. */
 var rsAstralRange = '\\ud800-\\udfff',
     rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
@@ -674,52 +678,4 @@ function toString(value) {
 
 function toObject(value) {
     return isObject(value) ? value : {};
-}
-
-function setTimezoneOffset(date) {
-    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-}
-
-function normalizeDate(date) {
-    if (!date) {
-        return new Date(date);
-    }
-
-    if (arguments.length > 1) {
-        date = Array.prototype.slice.call(arguments);
-    }
-
-    if (isArray(date)) {
-        date = new (Function.prototype.bind.apply(Date, [null].concat(date)))();
-    }
-
-    var jsDate = new Date(date);
-
-    if (isObject(date)) { //Native or Moment.js date
-        var momentBaseDate = date.creationData && date.creationData().input;
-
-        if (!(momentBaseDate && isString(momentBaseDate) && /:.+Z|GMT|[+-]\d\d:\d\d/.test(momentBaseDate))) {
-            setTimezoneOffset(jsDate); //Any data except moment.js date from UTC string (UTC ISO format have to contains time)
-        }
-
-        return jsDate;
-    }
-
-    if (!isNaN(jsDate) && isString(date)) { //ISO or RFC
-        if (date.match(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/) && date.indexOf('GMT') === -1) { //RFC without GMT
-            setTimezoneOffset(jsDate);
-        }
-    } else { //Timestamp
-        jsDate = new Date(Number(String(date).split('.').join('')));
-
-        setTimezoneOffset(jsDate);
-    }
-
-    return jsDate;
-}
-
-function toDate(date, noTime) {
-    date = normalizeDate(date);
-
-    return noTime ? new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) : date;
 }
