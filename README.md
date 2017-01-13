@@ -52,7 +52,7 @@ delete validators.minLength
 
 ### Validators.add
 
-Use these methods for adding custom validators in simple format (see [lib/common-validators-library.js](https://github.com/tamtakoe/common-validators/blob/master/lib/common-validators-library.js)).
+Use these methods for adding custom validators in simple format (see [src/common-validators-library.js](https://github.com/tamtakoe/common-validators/blob/master/src/common-validators-library.js)).
 See more in [validators-constructor documentation](https://www.npmjs.com/package/validators-constructor).
 Also you can use `Object.assign(commonValidators, customValidators)` in other situations
 
