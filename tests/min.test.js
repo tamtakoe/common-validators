@@ -26,7 +26,7 @@ describe('min', function() {
         expect(validators.min(5, 5)).to.be.undefined;
     });
 
-    it('number equal min is invalid if notInclusive=true', function() {
-        expect(validators.min(5, 5, {notInclusive: true})).to.have.property('error');
+    it('number equal min is invalid if exclusive=true', function() {
+        expect(validators.min(5, 5, {exclusive: true})).to.have.property('error');
     });
 });

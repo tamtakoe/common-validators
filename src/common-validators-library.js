@@ -96,25 +96,25 @@ module.exports = {
 
     //Number
     max: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toNumber(value) < arg : toNumber(value) <= arg)) {
-            return options.notInclusive ? 'Must be less %{arg}' : 'Must be less or equal %{arg}';
+        if (exists(value) && !(options.exclusive ? toNumber(value) < arg : toNumber(value) <= arg)) {
+            return options.exclusive ? 'Must be less %{arg}' : 'Must be less or equal %{arg}';
         }
     },
 
     min: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toNumber(value) > arg : toNumber(value) >= arg)) {
-            return options.notInclusive ? 'Must be more %{arg}' : 'Must be more or equal %{arg}';
+        if (exists(value) && !(options.exclusive ? toNumber(value) > arg : toNumber(value) >= arg)) {
+            return options.exclusive ? 'Must be more %{arg}' : 'Must be more or equal %{arg}';
         }
     },
 
     range: function(value, options) {
         if (exists(value)) {
-            if (!((options.notInclusiveFrom || options.notInclusive) ? toNumber(value) > options.from : toNumber(value) >= options.from)) {
+            if (!((options.exclusiveFrom || options.exclusive) ? toNumber(value) > options.from : toNumber(value) >= options.from)) {
                 return {
                     error: 'range.less',
                     message: options.lessMessage || 'Must be from %{from} to %{to}'
                 }
-            } else if (!((options.notInclusiveTo || options.notInclusive) ? toNumber(value) < options.to : toNumber(value) <= options.to)) {
+            } else if (!((options.exclusiveTo || options.exclusive) ? toNumber(value) < options.to : toNumber(value) <= options.to)) {
                 return {
                     error: 'range.many',
                     message: options.manyMessage || 'Must be from %{from} to %{to}'
@@ -199,25 +199,25 @@ module.exports = {
 
     //Date and time
     maxDateTime: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDateTime(value) < toDateTime(arg) : toDateTime(value) <= toDateTime(arg))) {
+        if (exists(value) && !(options.exclusive ? toDateTime(value) < toDateTime(arg) : toDateTime(value) <= toDateTime(arg))) {
             return 'Must be earlier than %{arg}';
         }
     },
 
     maxDate: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDate(value) < toDate(arg) : toDate(value) <= toDate(arg))) {
+        if (exists(value) && !(options.exclusive ? toDate(value) < toDate(arg) : toDate(value) <= toDate(arg))) {
             return 'Must be earlier than %{arg}';
         }
     },
 
     minDateTime: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDateTime(value) > toDateTime(arg) : toDateTime(value) >= toDateTime(arg))) {
+        if (exists(value) && !(options.exclusive ? toDateTime(value) > toDateTime(arg) : toDateTime(value) >= toDateTime(arg))) {
             return 'Must be no earlier than %{arg}';
         }
     },
 
     minDate: function(value, arg, options) {
-        if (exists(value) && !(options.notInclusive ? toDate(value) > toDate(arg) : toDate(value) >= toDate(arg))) {
+        if (exists(value) && !(options.exclusive ? toDate(value) > toDate(arg) : toDate(value) >= toDate(arg))) {
             return 'Must be no earlier than %{arg}';
         }
     },
@@ -236,13 +236,13 @@ module.exports = {
 
     rangeDateTime: function(value, options) {
         if (exists(value)) {
-            if (!((options.notInclusiveFrom || options.notInclusive) ? toDateTime(value) > toDateTime(options.from) : toDateTime(value) >= toDateTime(options.from))) {
+            if (!((options.exclusiveFrom || options.exclusive) ? toDateTime(value) > toDateTime(options.from) : toDateTime(value) >= toDateTime(options.from))) {
                 return {
                     error: 'rangeDateTime.many',
                     message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
 
-            } else if (!((options.notInclusiveTo || options.notInclusive) ? toDateTime(value) < toDateTime(options.to) : toDateTime(value) <= toDateTime(options.to))) {
+            } else if (!((options.exclusiveTo || options.exclusive) ? toDateTime(value) < toDateTime(options.to) : toDateTime(value) <= toDateTime(options.to))) {
                 return {
                     error: 'rangeDateTime.less',
                     message: options.lessMessage || 'Must be from %{from} to %{to}'
@@ -253,13 +253,13 @@ module.exports = {
 
     rangeDate: function(value, options) {
         if (exists(value)) {
-            if (!((options.notInclusiveFrom || options.notInclusive) ? toDate(value) > toDate(options.from) : toDate(value) >= toDate(options.from))) {
+            if (!((options.exclusiveFrom || options.exclusive) ? toDate(value) > toDate(options.from) : toDate(value) >= toDate(options.from))) {
                 return {
                     error: 'rangeDate.many',
                     message: options.manyMessage || 'Must be from %{from} to %{to}'
                 }
 
-            } else if (!((options.notInclusiveTo || options.notInclusive) ? toDate(value) < toDate(options.to) : toDate(value) <= toDate(options.to))) {
+            } else if (!((options.exclusiveTo || options.exclusive) ? toDate(value) < toDate(options.to) : toDate(value) <= toDate(options.to))) {
                 return {
                     error: 'rangeDate.less',
                     message: options.lessMessage || 'Must be from %{from} to %{to}'
