@@ -52,7 +52,7 @@ delete validators.minLength
 
 ### Validators.add
 
-Use this methods for adding custom validators in simple format (see 'lib/common-validators-library.js').
+Use these methods for adding custom validators in simple format (see [lib/common-validators-library.js](https://github.com/tamtakoe/common-validators/blob/master/lib/common-validators-library.js)).
 See more in [validators-constructor documentation](https://www.npmjs.com/package/validators-constructor).
 Also you can use `Object.assign(commonValidators, customValidators)` in other situations
 
@@ -73,7 +73,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - (`Any`) - Any custom arguments
 
-- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `arg`)
+- **return** (`Any`) - `undefined` if valid or object with error description. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `arg`)
 
 ### Validators:
 
@@ -82,7 +82,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **required | presence** - validates that the value isn't `undefined`, `null`, `NaN`, empty or whitespace only string, empty array or object
 
-- **notEmpty** - likes `required` but `undefined` is valid value. It is useful for PATCH-requests
+- **notEmpty** - like `required` but `undefined` is valid value. It is useful for PATCH-requests
 
 
 #### *Types*
