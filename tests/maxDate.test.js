@@ -27,7 +27,7 @@ describe('maxDate', function() {
     });
 
     it('date equal maxDate is invalid if inclusive=false', function() {
-        expect(validators.maxDate(new Date(2000, 0, 5, 23, 59, 59, 0), new Date(2000, 0, 5), {notInclusive: true})).to.have.property('error');
+        expect(validators.maxDate(new Date(2000, 0, 5, 23, 59, 59, 0), new Date(2000, 0, 5), {exclusive: true})).to.have.property('error');
     });
 
     it('date in Array format is correct', function() {

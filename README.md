@@ -130,18 +130,18 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 - **max** - value is less then maximum
   * arg (`Number`) - maximum
-  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
+  * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **min** - value is more then minimum
   * arg (`Number`) - minimum
-  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
+  * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **range** - value is in the range from minimum to maximum
   * from (`Number`) - minimum. Error: `range.many`
   * to (`Number`) - maximum. Error: `range.less`
-  * notInclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
-  * notInclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
-  * notInclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
+  * exclusive (`Boolean`) - doesn't include from and to. `false` by default
+  * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
+  * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
 
 - **odd** - value is odd
 
@@ -192,36 +192,36 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 
 - **maxDateTime** - value is less then maximum date
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date
-  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
+  * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **minDateTime** - value is more then minimum date
   * arg (`Date`, `String`, `Number`, `Moment`, `Array`) - minimum date
-  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
+  * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **rangeDateTime** - value is in the range from minimum to maximum dates (including)
   * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDateTime.many`
   * to (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDateTime.less`
-  * notInclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
-  * notInclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
-  * notInclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
+  * exclusive (`Boolean`) - doesn't include from and to. `false` by default
+  * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
+  * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
 
 - **equalDateTime** - value is equal specified date
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
 
 - **maxDate** - value is less then maximum date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date
-  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
+  * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **minDate** - value is more then minimum date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date
-  * notInclusive (`Boolean`) - doesn't inclusive arg. `false` by default
+  * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
   * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDate.many`
   * to (`Date`,`String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDate.less`
-  * notInclusive (`Boolean`) - doesn't inclusive from and to. `false` by default
-  * notInclusiveFrom (`Boolean`) - doesn't inclusive from. `false` by default
-  * notInclusiveTo (`Boolean`) - doesn't inclusive to. `false` by default
+  * exclusive (`Boolean`) - doesn't include from and to. `false` by default
+  * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
+  * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
 
 - **equalDate** - value is equal specified date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
