@@ -40,7 +40,7 @@ module.exports = {
 
     confirm: function confirm(value, options) {
         if (exists(value) && !deepEqual(toObject(value)[options.key], toObject(value)[options.comparedKey], options.strict)) {
-            return '%{option} must be equal %{comparedOption}';
+            return '%{key} must be equal %{comparedKey}';
         }
     },
 
