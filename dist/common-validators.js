@@ -745,6 +745,8 @@ var RESULT_HANDLER = 'resultHandler';
 var EXCEPTION_HANDLER = 'exceptionHandler';
 var ERROR_FORMAT = 'errorFormat';
 var MESSAGE = 'message';
+var IGNORE_OPTIONS_AFTER_ARG = 'ignoreOptionsAfterArg';
+var ARG = 'arg';
 
 /**
  * Add extra advantages to validator
@@ -762,6 +764,7 @@ function validatorWrapper(validators, name, validator) {
         var alias = this && this.alias;
         var validatorObj = validators[name];
         var validatorAliasObj = alias ? validators[alias] : {};
+        var arg = validatorObj[ARG] || validatorAliasObj[ARG] || validators[ARG];
 
         options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
@@ -769,8 +772,8 @@ function validatorWrapper(validators, name, validator) {
             value = options.parse(value);
         }
 
-        if (options.hasOwnProperty(validators.arg)) {
-            args = [value, options[validators.arg]].concat(Array.prototype.slice.call(arguments, 1));
+        if (options.hasOwnProperty(arg)) {
+            args = [value, options[arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
         try {
@@ -883,7 +886,8 @@ function Validators(params) {
         formatStr: hiddenPropertySettings,
         resultHandler: hiddenPropertySettings,
         exceptionHandler: hiddenPropertySettings,
-        arg: hiddenPropertySettings
+        arg: hiddenPropertySettings,
+        ignoreOptionsAfterArg: hiddenPropertySettings
     });
 
     this.errorFormat = {
@@ -923,13 +927,13 @@ function addValidator(name, validator, params) {
             var arg1 = arguments[1];
             var arg2 = arguments[2];
             var _this2 = this && this._this || _this;
-            var options = isPlainObject(arg2) ? arg2 : {};
+            var options = !(_this2[name][IGNORE_OPTIONS_AFTER_ARG] || _this2[IGNORE_OPTIONS_AFTER_ARG]) && isPlainObject(arg2) ? arg2 : {};
 
             if (arg1 != null && typeof arg1 !== 'boolean') {
                 if (isPlainObject(arg1)) {
                     options = arg1;
                 } else {
-                    options[_this2.arg] = arg1;
+                    options[_this2[name][ARG] || _this2[ARG]] = arg1;
                     args.shift();
                 }
             }
