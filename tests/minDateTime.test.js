@@ -28,7 +28,7 @@ describe('minDateTime', function() {
     });
 
     it('date equal minDateTime is invalid if inclusive=false', function() {
-        expect(validators.minDateTime(new Date(2000, 0, 1, 0, 0, 5, 0), new Date(2000, 0, 1, 0, 0, 5, 0), {notInclusive: true})).to.have.property('error');
+        expect(validators.minDateTime(new Date(2000, 0, 1, 0, 0, 5, 0), new Date(2000, 0, 1, 0, 0, 5, 0), {exclusive: true})).to.have.property('error');
     });
 
     it('date in GMT format is correct', function() {
