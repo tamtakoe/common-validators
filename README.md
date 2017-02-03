@@ -169,7 +169,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * arg (`Number`) - divisor
 
 
-#### *Size* (valid if value is empty, value is converted to the string or JSON-string)
+#### *Size in bytes* (valid if value is empty, value is converted to the string or JSON-string)
 
 - **maxSize** - value's size is less then maximum
   * arg (`Number`) - maximum
