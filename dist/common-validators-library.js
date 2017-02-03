@@ -4,13 +4,9 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var toDateTime = require('normalize-date');
-function toDate(date) {
-    return toDateTime(date, { noTime: true });
-}
 
 /* Validators */
-
-module.exports = {
+var validators = {
     custom: function custom(value, arg, options) {
         if (typeof arg === 'function') {
             return arg(value, options);
@@ -468,6 +464,32 @@ module.exports = {
 };
 
 /* Utils */
+var util = {
+    toDateTime: toDateTime,
+    toDate: toDate,
+    isNumber: isNumber,
+    isFunction: isFunction,
+    isInteger: isInteger,
+    isBoolean: isBoolean,
+    isArray: isArray,
+    isDateTime: isDateTime,
+    isString: isString,
+    isObject: isObject,
+    isPlainObject: isPlainObject,
+    isDefined: isDefined,
+    isEmpty: isEmpty,
+    exists: exists,
+    contains: contains,
+    toArray: toArray,
+    toNumber: toNumber,
+    toString: toString,
+    toObject: toObject
+};
+
+function toDate(date) {
+    return toDateTime(date, { noTime: true });
+}
+
 function isNumber(value) {
     return typeof value === 'number' && !isNaN(value);
 }
@@ -668,6 +690,12 @@ function toString(value) {
 function toObject(value) {
     return isObject(value) ? value : {};
 }
+
+/* Export */
+module.exports = {
+    validators: validators,
+    util: util
+};
 },{"normalize-date":2}],2:[function(require,module,exports){
 'use strict';
 

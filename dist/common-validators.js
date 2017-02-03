@@ -4,13 +4,9 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var toDateTime = require('normalize-date');
-function toDate(date) {
-    return toDateTime(date, { noTime: true });
-}
 
 /* Validators */
-
-module.exports = {
+var validators = {
     custom: function custom(value, arg, options) {
         if (typeof arg === 'function') {
             return arg(value, options);
@@ -468,6 +464,32 @@ module.exports = {
 };
 
 /* Utils */
+var util = {
+    toDateTime: toDateTime,
+    toDate: toDate,
+    isNumber: isNumber,
+    isFunction: isFunction,
+    isInteger: isInteger,
+    isBoolean: isBoolean,
+    isArray: isArray,
+    isDateTime: isDateTime,
+    isString: isString,
+    isObject: isObject,
+    isPlainObject: isPlainObject,
+    isDefined: isDefined,
+    isEmpty: isEmpty,
+    exists: exists,
+    contains: contains,
+    toArray: toArray,
+    toNumber: toNumber,
+    toString: toString,
+    toObject: toObject
+};
+
+function toDate(date) {
+    return toDateTime(date, { noTime: true });
+}
+
 function isNumber(value) {
     return typeof value === 'number' && !isNaN(value);
 }
@@ -668,13 +690,21 @@ function toString(value) {
 function toObject(value) {
     return isObject(value) ? value : {};
 }
+
+/* Export */
+module.exports = {
+    validators: validators,
+    util: util
+};
 },{"normalize-date":3}],2:[function(require,module,exports){
 'use strict';
 
 var validatorsLibrary = require('./common-validators-library');
 var validators = require('validators-constructor')();
 
-module.exports = validators.add(validatorsLibrary);
+validators.util = validatorsLibrary.util;
+
+module.exports = validators.add(validatorsLibrary.validators);
 },{"./common-validators-library":1,"validators-constructor":4}],3:[function(require,module,exports){
 'use strict';
 
@@ -745,7 +775,7 @@ var RESULT_HANDLER = 'resultHandler';
 var EXCEPTION_HANDLER = 'exceptionHandler';
 var ERROR_FORMAT = 'errorFormat';
 var MESSAGE = 'message';
-var IGNORE_OPTIONS_AFTER_ARG = 'ignoreOptionsAfterArg';
+var SIMPLE_ARGS_FORMAT = 'simpleArgsFormat';
 var ARG = 'arg';
 
 /**
@@ -765,6 +795,7 @@ function validatorWrapper(validators, name, validator) {
         var validatorObj = validators[name];
         var validatorAliasObj = alias ? validators[alias] : {};
         var arg = validatorObj[ARG] || validatorAliasObj[ARG] || validators[ARG];
+        var isSimpleArgsFormat = validatorObj[SIMPLE_ARGS_FORMAT] || validatorAliasObj[SIMPLE_ARGS_FORMAT] || validators[SIMPLE_ARGS_FORMAT];
 
         options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
@@ -772,7 +803,7 @@ function validatorWrapper(validators, name, validator) {
             value = options.parse(value);
         }
 
-        if (options.hasOwnProperty(arg)) {
+        if (options.hasOwnProperty(arg) && !isSimpleArgsFormat) {
             args = [value, options[arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
@@ -790,50 +821,55 @@ function validatorWrapper(validators, name, validator) {
             }
         }
 
-        if (error) {
-            var _ret = function () {
-                var message = options[MESSAGE] || validatorObj[MESSAGE] || validatorAliasObj[MESSAGE];
+        function handleError(error) {
+            if (error) {
+                var _ret = function () {
+                    var errorObj = (typeof error === 'undefined' ? 'undefined' : _typeof(error)) === 'object' ? error : null; //in case if we rewrite message in options and want to use fields from error object in the placeholders
+                    var message = options[MESSAGE] || validatorObj[MESSAGE] || validatorAliasObj[MESSAGE];
 
-                if (message) {
-                    error = message;
-                }
-
-                var formattedErrorMessage = validators.formatMessage(error, Object.assign({ validator: alias || name, value: value }, options));
-                var format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
-
-                if (format) {
-                    if (typeof formattedErrorMessage === 'string') {
-                        formattedErrorMessage = { message: formattedErrorMessage };
+                    if (message) {
+                        error = message;
                     }
 
-                    if (format.$options) {
-                        format = Object.assign({}, format);
+                    var formattedErrorMessage = validators.formatMessage(error, Object.assign({ validator: alias || name, value: value }, errorObj, options));
+                    var format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
 
-                        Object.keys(options).forEach(function (key) {
-                            if (!MESSAGE_REGEXP.test(key) && typeof options[key] !== 'function') {
-                                format[key] = options[key];
-                            }
-                        });
-                    }
-                    delete format.$options;
+                    if (format) {
+                        if (typeof formattedErrorMessage === 'string') {
+                            formattedErrorMessage = { message: formattedErrorMessage };
+                        }
 
-                    if (format.$origin) {
-                        format = Object.assign({}, format, formattedErrorMessage);
+                        if (format.$options) {
+                            format = Object.assign({}, format);
+
+                            Object.keys(options).forEach(function (key) {
+                                if (!MESSAGE_REGEXP.test(key) && typeof options[key] !== 'function') {
+                                    format[key] = options[key];
+                                }
+                            });
+                        }
+                        delete format.$options;
+
+                        if (format.$origin) {
+                            format = Object.assign({}, format, formattedErrorMessage);
+                        }
+                        delete format.$origin;
+
+                        return {
+                            v: validators.formatMessage(format, Object.assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
+                        };
                     }
-                    delete format.$origin;
 
                     return {
-                        v: validators.formatMessage(format, Object.assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
+                        v: formattedErrorMessage
                     };
-                }
+                }();
 
-                return {
-                    v: formattedErrorMessage
-                };
-            }();
-
-            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+                if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+            }
         }
+
+        return (typeof error === 'undefined' ? 'undefined' : _typeof(error)) === 'object' && typeof error.then === 'function' ? error.then(handleError) : handleError(error);
     };
 }
 
@@ -876,7 +912,9 @@ function isPlainObject(value) {
  * @param {Function}          [formatStr] - for format message strings with patterns
  * @param {Function}          [resultHandler] - handle result of validation
  * @param {Function|String}   [exceptionHandler] - handle JS exceptions
+ * @param {String}            [simpleArgsFormat] - don't map arg to options.arg or vice versa
  * @param {String}            [arg] - name of compared value
+ * @param {Object}            [util] - reserved for validator's libraries helpers
  *
  * @constructor
  */
@@ -887,7 +925,8 @@ function Validators(params) {
         resultHandler: hiddenPropertySettings,
         exceptionHandler: hiddenPropertySettings,
         arg: hiddenPropertySettings,
-        ignoreOptionsAfterArg: hiddenPropertySettings
+        ignoreOptionsAfterArg: hiddenPropertySettings,
+        util: hiddenPropertySettings
     });
 
     this.errorFormat = {
@@ -901,6 +940,7 @@ function Validators(params) {
         return result;
     };
     this.arg = 'arg';
+    this.util = {};
 
     Object.assign(this, params);
 }
@@ -927,10 +967,11 @@ function addValidator(name, validator, params) {
             var arg1 = arguments[1];
             var arg2 = arguments[2];
             var _this2 = this && this._this || _this;
-            var options = !(_this2[name][IGNORE_OPTIONS_AFTER_ARG] || _this2[IGNORE_OPTIONS_AFTER_ARG]) && isPlainObject(arg2) ? arg2 : {};
+            var isSimpleArgsFormat = _this2[name][SIMPLE_ARGS_FORMAT] || _this2[SIMPLE_ARGS_FORMAT];
+            var options = !isSimpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
 
             if (arg1 != null && typeof arg1 !== 'boolean') {
-                if (isPlainObject(arg1)) {
+                if (isPlainObject(arg1) || isSimpleArgsFormat) {
                     options = arg1;
                 } else {
                     options[_this2[name][ARG] || _this2[ARG]] = arg1;

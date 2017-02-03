@@ -48,6 +48,8 @@ validators.minLengthValidator = validators.minLength
 delete validators.minLength
 ```
 
+`validators.util` is uncountable field with object of utils like isEmpty, toString, etc.
+
 ## API
 
 ### Validators.add
