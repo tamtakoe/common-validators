@@ -169,6 +169,22 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * arg (`Number`) - divisor
 
 
+#### *Size* (valid if value is empty, value is converted to the string or JSON-string)
+
+- **maxSize** - value's size is less then maximum
+  * arg (`Number`) - maximum
+
+- **minSize** - value's size is more then minimum
+  * arg (`Number`) - minimum
+
+- **rangeSize** - value's size is in the range from minimum to maximum (including)
+  * from (`Number`) - minimum. Error: `rangeSize.many`
+  * to (`Number`) - maximum. Error: `rangeSize.less`
+
+- **equalSize** - value's size is equal to specified value
+  * arg (`Number`) - divisor
+
+
 #### *RegExp* (valid if value is empty, value is converted to the string)
 
 - **pattern** - value matches the pattern

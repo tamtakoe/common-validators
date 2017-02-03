@@ -173,6 +173,60 @@ var validators = {
         }
     },
 
+    //Size
+    maxSize: function(value, arg) {
+        const valueSize = byteLength(value);
+
+        if (exists(value) && !(options.exclusive ? valueSize < arg : valueSize <= arg)) {
+            return {
+                message: options.exclusive ? 'Size must be less %{arg}' : 'Size must be less or equal %{arg}',
+                size: valueSize
+            };
+        }
+    },
+
+    minSize: function(value, arg) {
+        const valueSize = byteLength(value);
+
+        if (exists(value) && !(options.exclusive ? valueSize > arg : valueSize >= arg)) {
+            return {
+                message: options.exclusive ? 'Size must be more %{arg}' : 'Size must be more or equal %{arg}',
+                size: valueSize
+            };
+        }
+    },
+
+    equalSize: function(value, arg) {
+        const valueSize = byteLength(value);
+
+        if (exists(value) && toArray(value).length !== arg) {
+            return {
+                message: 'Length must be equal %{arg}',
+                size: valueSize
+            };
+        }
+    },
+
+    rangeSize: function(value, options) {
+        const valueSize = byteLength(value);
+
+        if (exists(value)) {
+            if (!((options.exclusiveFrom || options.exclusive) ? valueSize > options.from : valueSize >= options.from)) {
+                return {
+                    error: 'rangeSize.less',
+                    message: options.lessMessage || 'Size must be from %{from} to %{to}',
+                    size: valueSize
+                }
+            } else if (!((options.exclusiveTo || options.exclusive) ? valueSize < options.to : valueSize <= options.to)) {
+                return {
+                    error: 'rangeSize.many',
+                    message: options.manyMessage || 'Size must be from %{from} to %{to}',
+                    size: valueSize
+                }
+            }
+        }
+    },
+
     //RegExp
     pattern: function(value, arg) {
         if (exists(value) && !(new RegExp(arg)).test(toString(value))) {
@@ -487,7 +541,8 @@ var util = {
     toArray: toArray,
     toNumber: toNumber,
     toString: toString,
-    toObject: toObject
+    toObject: toObject,
+    byteLength: byteLength
 };
 
 function toDate(date) {
@@ -700,6 +755,18 @@ function toString(value) {
 
 function toObject(value) {
     return isObject(value) ? value : {};
+}
+
+function byteLength(str) {
+    str = str ? (typeof str === 'string' ? str : JSON.stringify(str)) : '';
+    // returns the byte length of an utf8 string
+    var s = str.length;
+    for (var i = str.length-1; i>=0; i--) {
+        const code = str.charCodeAt(i);
+        if (code > 0x7f && code <= 0x7ff) s++;
+        else if (code > 0x7ff && code <= 0xffff) s+=2;
+    }
+    return s;
 }
 
 /* Export */
