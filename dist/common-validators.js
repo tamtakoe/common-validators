@@ -180,9 +180,9 @@ var validators = {
     maxSize: function maxSize(value, arg) {
         var valueSize = byteLength(value);
 
-        if (exists(value) && !(options.exclusive ? valueSize < arg : valueSize <= arg)) {
+        if (exists(value) && valueSize > arg) {
             return {
-                message: options.exclusive ? 'Size must be less %{arg}' : 'Size must be less or equal %{arg}',
+                message: 'Size must be less %{arg}',
                 size: valueSize
             };
         }
@@ -191,9 +191,9 @@ var validators = {
     minSize: function minSize(value, arg) {
         var valueSize = byteLength(value);
 
-        if (exists(value) && !(options.exclusive ? valueSize > arg : valueSize >= arg)) {
+        if (exists(value) && valueSize < arg) {
             return {
-                message: options.exclusive ? 'Size must be more %{arg}' : 'Size must be more or equal %{arg}',
+                message: 'Size must be more %{arg}',
                 size: valueSize
             };
         }
@@ -202,7 +202,7 @@ var validators = {
     equalSize: function equalSize(value, arg) {
         var valueSize = byteLength(value);
 
-        if (exists(value) && toArray(value).length !== arg) {
+        if (exists(value) && valueSize !== arg) {
             return {
                 message: 'Length must be equal %{arg}',
                 size: valueSize
@@ -214,13 +214,13 @@ var validators = {
         var valueSize = byteLength(value);
 
         if (exists(value)) {
-            if (!(options.exclusiveFrom || options.exclusive ? valueSize > options.from : valueSize >= options.from)) {
+            if (valueSize < options.from) {
                 return {
                     error: 'rangeSize.less',
                     message: options.lessMessage || 'Size must be from %{from} to %{to}',
                     size: valueSize
                 };
-            } else if (!(options.exclusiveTo || options.exclusive ? valueSize < options.to : valueSize <= options.to)) {
+            } else if (valueSize > options.to) {
                 return {
                     error: 'rangeSize.many',
                     message: options.manyMessage || 'Size must be from %{from} to %{to}',
