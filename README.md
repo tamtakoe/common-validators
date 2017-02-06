@@ -130,11 +130,11 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 #### *Numbers* (valid if value is empty, value is converted to the number)
 
-- **max** - value is less then maximum
+- **max** - value is less than maximum
   * arg (`Number`) - maximum
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
-- **min** - value is more then minimum
+- **min** - value is greater than minimum
   * arg (`Number`) - minimum
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
@@ -155,10 +155,10 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 #### *Length* (valid if value is empty, value is converted to the array)
 
-- **maxLength** - value's length is less then maximum
+- **maxLength** - value's length is less than maximum
   * arg (`Number`) - maximum
 
-- **minLength** - value's length is more then minimum
+- **minLength** - value's length is greater than minimum
   * arg (`Number`) - minimum
 
 - **rangeLength** - value's length is in the range from minimum to maximum (including)
@@ -171,10 +171,10 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 #### *Size in bytes* (valid if value is empty, value is converted to the string or JSON-string)
 
-- **maxSize** - value's size is less then maximum
+- **maxSize** - value's size is less than maximum
   * arg (`Number`) - maximum
 
-- **minSize** - value's size is more then minimum
+- **minSize** - value's size is greater than minimum
   * arg (`Number`) - minimum
 
 - **rangeSize** - value's size is in the range from minimum to maximum (including)
@@ -208,11 +208,11 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 
 #### *Date and time* (valid if value is empty, value is converted to the date)
 
-- **maxDateTime** - value is less then maximum date
+- **maxDateTime** - value is less than maximum date
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
-- **minDateTime** - value is more then minimum date
+- **minDateTime** - value is greater than minimum date
   * arg (`Date`, `String`, `Number`, `Moment`, `Array`) - minimum date
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
@@ -226,11 +226,11 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
 - **equalDateTime** - value is equal specified date
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
 
-- **maxDate** - value is less then maximum date (time is ignored)
+- **maxDate** - value is less than maximum date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
-- **minDate** - value is more then minimum date (time is ignored)
+- **minDate** - value is greater than minimum date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
