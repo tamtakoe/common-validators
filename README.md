@@ -48,7 +48,8 @@ validators.minLengthValidator = validators.minLength
 delete validators.minLength
 ```
 
-`validators.util` is uncountable field with object of utils. Common validators has following utils:
+`validators.util` is uncountable field with object of utils. You can use them for own validators like `this.utils.toArray`.
+Common validators has following utils:
 
 ```
 toDateTime
