@@ -48,7 +48,30 @@ validators.minLengthValidator = validators.minLength
 delete validators.minLength
 ```
 
-`validators.util` is uncountable field with object of utils like isEmpty, toString, etc.
+`validators.util` is uncountable field with object of utils. Common validators has following utils:
+
+```
+toDateTime
+toDate
+isNumber
+isFunction
+isInteger
+isBoolean
+isArray
+isDateTime
+isString
+isObject
+isPlainObject
+isDefined
+isEmpty
+exists
+contains
+toArray
+toNumber
+toString
+toObject
+byteLength
+```
 
 ## API
 
