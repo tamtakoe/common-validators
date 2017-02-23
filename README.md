@@ -110,8 +110,8 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 
 #### *Equality* (valid if value is empty)
 
-- **equal** - value is equal to specified value (deep equal for objects)
-  * arg (`Any`) - specified value. Notice! If you use 'arg' as argument it need to exist and not to be object or boolean
+- **equal** - value is equal to comparable value (deep equal for objects)
+  * arg (`Any`) - comparable value. Notice! If you use 'arg' as argument it need to exist and not to be object or boolean
   * strict (`Boolean`) - Use strict comparison (===). `true` by default
 
 - **confirm** - option in object is equal to other option in the same object. Value need to be an object
@@ -145,6 +145,8 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
   * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
 
+- **equal** - see Equality section above
+
 - **odd** - value is odd
 
 - **even** - value is even
@@ -165,14 +167,15 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * from (`Number`) - minimum. Error: `rangeLength.many`
   * to (`Number`) - maximum. Error: `rangeLength.less`
 
-- **equalLength** - value's length is equal to specified value
-  * arg (`Number`) - divisor
+- **equalLength** - value's length is equal to comparable value
+  * arg (`Number`) - comparable value
 
 
 #### *Size in bytes* (valid if value is empty, value is converted to the string or JSON-string)
 
 - **maxSize** - value's size is less then maximum
   * arg (`Number`) - maximum
+  * stringify (`Function`) - stringify non string values. `JSON.stringify` by default
 
 - **minSize** - value's size is more then minimum
   * arg (`Number`) - minimum
@@ -181,8 +184,8 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * from (`Number`) - minimum. Error: `rangeSize.many`
   * to (`Number`) - maximum. Error: `rangeSize.less`
 
-- **equalSize** - value's size is equal to specified value
-  * arg (`Number`) - divisor
+- **equalSize** - value's size is equal to comparable value
+  * arg (`Number`) - comparable value
 
 
 #### *RegExp* (valid if value is empty, value is converted to the string)
@@ -223,8 +226,8 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
   * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
 
-- **equalDateTime** - value is equal specified date
-  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
+- **equalDateTime** - value is equal comparable date
+  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - comparable date
 
 - **maxDate** - value is less then maximum date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date
@@ -241,8 +244,8 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
   * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
 
-- **equalDate** - value is equal specified date (time is ignored)
-  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - specified date
+- **equalDate** - value is equal comparable date (time is ignored)
+  * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - comparable date
 
 
 #### *Web* (valid if value is empty, value is converted to the string)
@@ -270,11 +273,17 @@ You also can set fileList to `options.files`. It is useful for input with type="
 - **maxFileSize** - size of every file is less then maximum
 * arg (`Number`) - maximum in bytes
 
+- **equalFileSize** - size of every file equal then comparable value
+* arg (`Number`) - comparable value in bytes
+
 - **minFileSizeAll** - size of all files is more then minimum
 * arg (`Number`) - minimum in bytes
 
 - **maxFileSizeAll** - size of all files is less then maximum
 * arg (`Number`) - maximum in bytes
+
+- **equalFileSizeAll** - size of all files equal then comparable value
+* arg (`Number`) - comparable value in bytes
 
 - **minFileNameLength** - name of every file is more then minimum
 * arg (`Number`) - minimum in bytes

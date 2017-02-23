@@ -17,6 +17,8 @@ describe('rangeDateTime', function() {
 
     it('date in range is valid', function() {
         expect(validators.rangeDateTime(new Date(2000, 0, 1, 0, 0, 4, 0), {from: new Date(2000, 0, 1, 0, 0, 3, 0), to: new Date(2000, 0, 1, 0, 0, 5, 0)})).to.be.undefined;
+        expect(validators.rangeDateTime(new Date(2000, 0, 1, 0, 0, 4, 0), {from: new Date(2000, 0, 1, 0, 0, 4, 0), to: new Date(2000, 0, 1, 0, 0, 5, 0)})).to.be.undefined;
+        expect(validators.rangeDateTime(new Date(2000, 0, 1, 0, 0, 4, 0), {from: new Date(2000, 0, 1, 0, 0, 3, 0), to: new Date(2000, 0, 1, 0, 0, 4, 0)})).to.be.undefined;
     });
 
     it('date less then range is invalid', function() {

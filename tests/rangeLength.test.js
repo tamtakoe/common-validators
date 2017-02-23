@@ -15,6 +15,8 @@ describe('rangeLength', function() {
 
     it('length in range is valid', function() {
         expect(validators.rangeLength('1234', {from: 3, to: 5})).to.be.undefined;
+        expect(validators.rangeLength('1234', {from: 4, to: 5})).to.be.undefined;
+        expect(validators.rangeLength('1234', {from: 3, to: 4})).to.be.undefined;
     });
 
     it('length less then range is invalid', function() {

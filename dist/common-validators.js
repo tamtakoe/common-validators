@@ -177,8 +177,8 @@ var validators = {
     },
 
     //Size
-    maxSize: function maxSize(value, arg) {
-        var valueSize = byteLength(value);
+    maxSize: function maxSize(value, arg, options) {
+        var valueSize = byteLength(value, options);
 
         if (exists(value) && valueSize > arg) {
             return {
@@ -188,8 +188,8 @@ var validators = {
         }
     },
 
-    minSize: function minSize(value, arg) {
-        var valueSize = byteLength(value);
+    minSize: function minSize(value, arg, options) {
+        var valueSize = byteLength(value, options);
 
         if (exists(value) && valueSize < arg) {
             return {
@@ -199,8 +199,8 @@ var validators = {
         }
     },
 
-    equalSize: function equalSize(value, arg) {
-        var valueSize = byteLength(value);
+    equalSize: function equalSize(value, arg, options) {
+        var valueSize = byteLength(value, options);
 
         if (exists(value) && valueSize !== arg) {
             return {
@@ -211,7 +211,7 @@ var validators = {
     },
 
     rangeSize: function rangeSize(value, options) {
-        var valueSize = byteLength(value);
+        var valueSize = byteLength(value, options);
 
         if (exists(value)) {
             if (valueSize < options.from) {
@@ -472,6 +472,15 @@ var validators = {
             return 'File size must be less or equal %{arg} bytes';
         }
     },
+    equalFileSize: function equalFileSize(files, arg, options) {
+        files = toArray(options.files || files);
+
+        if (exists(files) && !files.every(function (file) {
+            return toNumber(file.size) === arg;
+        })) {
+            return 'File size must be equal %{arg} bytes';
+        }
+    },
     minFileSizeAll: function minFileSizeAll(files, arg, options) {
         files = toArray(options.files || files);
 
@@ -488,6 +497,15 @@ var validators = {
             return toNumber(prev.size || prev) + toNumber(curr.size);
         }) <= arg)) {
             return 'Total files size must be less or equal %{arg} bytes';
+        }
+    },
+    equalFileSizeAll: function equalFileSizeAll(files, arg, options) {
+        files = toArray(options.files || files);
+
+        if (exists(files) && !(files.reduce(function (prev, curr) {
+            return toNumber(prev.size || prev) + toNumber(curr.size);
+        }) === arg)) {
+            return 'Total files size must be equal %{arg} bytes';
         }
     },
     minFileNameLength: function minFileNameLength(files, arg, options) {
@@ -746,8 +764,11 @@ function toObject(value) {
     return isObject(value) ? value : {};
 }
 
-function byteLength(str) {
-    str = str ? typeof str === 'string' ? str : JSON.stringify(str) : '';
+function byteLength(str, options) {
+    //Note: Node.js has Buffer.byteLength()
+    var stringify = options && typeof options.stringify === 'function' ? options.stringify : JSON.stringify;
+
+    str = str != null ? typeof str === 'string' ? str : stringify(str) : '';
     // returns the byte length of an utf8 string
     var s = str.length;
     for (var i = str.length - 1; i >= 0; i--) {
@@ -1037,11 +1058,14 @@ function addValidator(name, validator, params) {
             var options = !isSimpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
 
             if (arg1 != null && typeof arg1 !== 'boolean') {
-                if (isPlainObject(arg1) || isSimpleArgsFormat) {
+                if (isPlainObject(arg1)) {
                     options = arg1;
                 } else {
                     options[_this2[name][ARG] || _this2[ARG]] = arg1;
-                    args.shift();
+
+                    if (!isSimpleArgsFormat) {
+                        args.shift();
+                    }
                 }
             }
 

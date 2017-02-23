@@ -1,3 +1,5 @@
+'use strict';
+
 const toDateTime = require('normalize-date');
 
 /* Validators */
@@ -174,8 +176,8 @@ var validators = {
     },
 
     //Size
-    maxSize: function maxSize(value, arg) {
-        var valueSize = byteLength(value);
+    maxSize: function maxSize(value, arg, options) {
+        var valueSize = byteLength(value, options);
 
         if (exists(value) && valueSize > arg) {
             return {
@@ -185,8 +187,8 @@ var validators = {
         }
     },
 
-    minSize: function minSize(value, arg) {
-        var valueSize = byteLength(value);
+    minSize: function minSize(value, arg, options) {
+        var valueSize = byteLength(value, options);
 
         if (exists(value) && valueSize < arg) {
             return {
@@ -196,8 +198,8 @@ var validators = {
         }
     },
 
-    equalSize: function equalSize(value, arg) {
-        var valueSize = byteLength(value);
+    equalSize: function equalSize(value, arg, options) {
+        var valueSize = byteLength(value, options);
 
         if (exists(value) && valueSize !== arg) {
             return {
@@ -208,7 +210,7 @@ var validators = {
     },
 
     rangeSize: function rangeSize(value, options) {
-        var valueSize = byteLength(value);
+        var valueSize = byteLength(value, options);
 
         if (exists(value)) {
             if (valueSize < options.from) {
@@ -481,6 +483,14 @@ var validators = {
         }
     },
 
+    equalFileSize(files, arg, options) {
+        files = toArray(options.files || files);
+
+        if (exists(files) && !files.every(file => toNumber(file.size) === arg)) {
+            return 'File size must be equal %{arg} bytes';
+        }
+    },
+
     minFileSizeAll(files, arg, options) {
         files = toArray(options.files || files);
 
@@ -494,6 +504,14 @@ var validators = {
 
         if (exists(files) && !(files.reduce((prev, curr) => (toNumber(prev.size || prev)) + toNumber(curr.size)) <= arg)) {
             return 'Total files size must be less or equal %{arg} bytes';
+        }
+    },
+
+    equalFileSizeAll(files, arg, options) {
+        files = toArray(options.files || files);
+
+        if (exists(files) && !(files.reduce((prev, curr) => (toNumber(prev.size || prev)) + toNumber(curr.size)) === arg)) {
+            return 'Total files size must be equal %{arg} bytes';
         }
     },
 
@@ -757,8 +775,10 @@ function toObject(value) {
     return isObject(value) ? value : {};
 }
 
-function byteLength(str) {
-    str = str ? (typeof str === 'string' ? str : JSON.stringify(str)) : '';
+function byteLength(str, options) { //Note: Node.js has Buffer.byteLength()
+    const stringify = options && typeof options.stringify === 'function' ? options.stringify : JSON.stringify;
+
+    str = str != null ? (typeof str === 'string' ? str : stringify(str)) : '';
     // returns the byte length of an utf8 string
     var s = str.length;
     for (var i = str.length-1; i>=0; i--) {

@@ -29,7 +29,7 @@
     "README.md"
   ],
   "dependencies": {
-    "validators-constructor": "0.1.3",
+    "validators-constructor": "0.1.4",
     "normalize-date": "0.0.3"
   },
   "devDependencies": {
