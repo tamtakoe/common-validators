@@ -39,55 +39,55 @@ var validators = {
 
     //Types
     object: function(value) {
-        if (!isPlainObject(value)) {
+        if (isDefined(value) && !isPlainObject(value)) {
             return 'Must be an object'
         }
     },
 
     array: function(value) {
-        if (!isArray(value)) {
+        if (isDefined(value) && !isArray(value)) {
             return 'Must be an array'
         }
     },
 
     string: function(value) {
-        if (!isString(value)) {
+        if (isDefined(value) && !isString(value)) {
             return 'Must be a string';
         }
     },
     
     number: function(value) {
-        if (!isNumber(value)) {
+        if (isDefined(value) && !isNumber(value)) {
             return 'Must be a number';
         }
     },
 
     integer: function(value) {
-        if (!isInteger(value)) {
+        if (isDefined(value) && !isInteger(value)) {
             return 'Must be an integer';
         }
     },
 
     date: function(value) {
-        if (!isDateTime(value)) {
+        if (isDefined(value) && !isDateTime(value)) {
             return 'Must be a valid date';
         }
     },
 
     boolean: function(value) {
-        if (!isBoolean(value)) {
+        if (isDefined(value) && !isBoolean(value)) {
             return 'Must be a boolean';
         }
     },
 
     function: function(value) {
-        if (!isFunction(value)) {
+        if (isDefined(value) && !isFunction(value)) {
             return 'Must be a function';
         }
     },
 
     null: function(value) {
-        if (value !== null) {
+        if (isDefined(value) && value !== null) {
             return 'Must be a null';
         }
     },
@@ -553,6 +553,7 @@ var util = {
     isObject: isObject,
     isPlainObject: isPlainObject,
     isDefined: isDefined,
+    isUndefinedOrNull: isUndefinedOrNull,
     isEmpty: isEmpty,
     exists: exists,
     contains: contains,
@@ -612,9 +613,12 @@ function isPlainObject(value) {
         && (typeof value.toDateTime !== 'function' || value.propertyIsEnumerable('toDateTime')); //Moment.js date
 }
 
-// Returns false if the object is `null` of `undefined`
 function isDefined(obj) {
-    return obj != null;
+    return obj !== undefined;
+}
+
+function isUndefinedOrNull(obj) {
+    return obj == null;
 }
 
 //Note! undefined is not empty
@@ -650,7 +654,7 @@ function exists(value) {
 function contains(collection, value, some) {
     some = some ? 'some' : 'every';
 
-    if (!isDefined(collection)) {
+    if (isUndefinedOrNull(collection)) {
         return false;
     }
 
@@ -683,7 +687,7 @@ function deepEqual(actual, expected, strict) {
 function objEqual(a, b, strict) {
     var i, key;
 
-    if (!isDefined(a) || !isDefined(b)) {
+    if (isUndefinedOrNull(a) || isUndefinedOrNull(b)) {
         return false;
     }
 

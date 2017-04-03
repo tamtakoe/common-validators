@@ -18,7 +18,7 @@ describe('types', function() {
         expect(validators.object(false)).to.have.property('error');
         expect(validators.object(function() {})).to.have.property('error');
         expect(validators.object(null)).to.have.property('error');
-        expect(validators.object(undefined)).to.have.property('error');
+        expect(validators.object(undefined)).to.be.undefined;
     });
 
     it('value is array', function() {
@@ -35,7 +35,7 @@ describe('types', function() {
         expect(validators.array(false)).to.have.property('error');
         expect(validators.array(function() {})).to.have.property('error');
         expect(validators.array(null)).to.have.property('error');
-        expect(validators.array(undefined)).to.have.property('error');
+        expect(validators.array(undefined)).to.be.undefined;
     });
 
     it('value is string', function() {
@@ -52,7 +52,7 @@ describe('types', function() {
         expect(validators.string(false)).to.have.property('error');
         expect(validators.string(function() {})).to.have.property('error');
         expect(validators.string(null)).to.have.property('error');
-        expect(validators.string(undefined)).to.have.property('error');
+        expect(validators.string(undefined)).to.be.undefined;
     });
 
     it('value is number', function() {
@@ -69,7 +69,7 @@ describe('types', function() {
         expect(validators.number(false)).to.have.property('error');
         expect(validators.number(function() {})).to.have.property('error');
         expect(validators.number(null)).to.have.property('error');
-        expect(validators.number(undefined)).to.have.property('error');
+        expect(validators.number(undefined)).to.be.undefined;
     });
 
     it('value is integer', function() {
@@ -86,7 +86,7 @@ describe('types', function() {
         expect(validators.integer(false)).to.have.property('error');
         expect(validators.integer(function() {})).to.have.property('error');
         expect(validators.integer(null)).to.have.property('error');
-        expect(validators.integer(undefined)).to.have.property('error');
+        expect(validators.integer(undefined)).to.be.undefined;
     });
 
     it('value is date', function() {
@@ -103,7 +103,7 @@ describe('types', function() {
         expect(validators.date(false)).to.have.property('error');
         expect(validators.date(function() {})).to.have.property('error');
         expect(validators.date(null)).to.have.property('error');
-        expect(validators.date(undefined)).to.have.property('error');
+        expect(validators.date(undefined)).to.be.undefined;
     });
 
     it('value is boolean', function() {
@@ -120,7 +120,7 @@ describe('types', function() {
         expect(validators.boolean(false)).to.be.undefined;
         expect(validators.boolean(function() {})).to.have.property('error');
         expect(validators.boolean(null)).to.have.property('error');
-        expect(validators.boolean(undefined)).to.have.property('error');
+        expect(validators.boolean(undefined)).to.be.undefined;
     });
 
     it('value is function', function() {
@@ -137,7 +137,7 @@ describe('types', function() {
         expect(validators.function(false)).to.have.property('error');
         expect(validators.function(function() {})).to.be.undefined;
         expect(validators.function(null)).to.have.property('error');
-        expect(validators.function(undefined)).to.have.property('error');
+        expect(validators.function(undefined)).to.be.undefined;
     });
 
     it('value is null', function() {
@@ -154,6 +154,6 @@ describe('types', function() {
         expect(validators.null(false)).to.have.property('error');
         expect(validators.null(function() {})).to.have.property('error');
         expect(validators.null(null)).to.be.undefined;
-        expect(validators.null(undefined)).to.have.property('error');
+        expect(validators.null(undefined)).to.be.undefined;
     });
 });

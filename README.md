@@ -64,6 +64,7 @@ isString
 isObject
 isPlainObject
 isDefined
+isUndefinedOrNull
 isEmpty
 exists
 contains
@@ -111,7 +112,7 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
 - **notEmpty** - like `required` but `undefined` is valid value. It is useful for PATCH-requests
 
 
-#### *Types*
+#### *Types* (valid if value is undefined)
 
 - **object** - value is plain object
 

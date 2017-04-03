@@ -1,7 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.commonValidators = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var toDateTime = require('normalize-date');
 
@@ -42,55 +42,55 @@ var validators = {
 
     //Types
     object: function object(value) {
-        if (!isPlainObject(value)) {
+        if (isDefined(value) && !isPlainObject(value)) {
             return 'Must be an object';
         }
     },
 
     array: function array(value) {
-        if (!isArray(value)) {
+        if (isDefined(value) && !isArray(value)) {
             return 'Must be an array';
         }
     },
 
     string: function string(value) {
-        if (!isString(value)) {
+        if (isDefined(value) && !isString(value)) {
             return 'Must be a string';
         }
     },
 
     number: function number(value) {
-        if (!isNumber(value)) {
+        if (isDefined(value) && !isNumber(value)) {
             return 'Must be a number';
         }
     },
 
     integer: function integer(value) {
-        if (!isInteger(value)) {
+        if (isDefined(value) && !isInteger(value)) {
             return 'Must be an integer';
         }
     },
 
     date: function date(value) {
-        if (!isDateTime(value)) {
+        if (isDefined(value) && !isDateTime(value)) {
             return 'Must be a valid date';
         }
     },
 
     boolean: function boolean(value) {
-        if (!isBoolean(value)) {
+        if (isDefined(value) && !isBoolean(value)) {
             return 'Must be a boolean';
         }
     },
 
     function: function _function(value) {
-        if (!isFunction(value)) {
+        if (isDefined(value) && !isFunction(value)) {
             return 'Must be a function';
         }
     },
 
     null: function _null(value) {
-        if (value !== null) {
+        if (isDefined(value) && value !== null) {
             return 'Must be a null';
         }
     },
@@ -427,31 +427,25 @@ var validators = {
         files = toArray(options.files || files);
 
         if (exists(files)) {
-            var _ret = function () {
-                var allowedTypes = (arg || '').split(',').map(function (type) {
-                    return type.trim().replace('*', '');
+            var allowedTypes = (arg || '').split(',').map(function (type) {
+                return type.trim().replace('*', '');
+            });
+
+            var isError = files.some(function (file) {
+                return allowedTypes.every(function (type) {
+                    if (type[0] === '.') {
+                        //extension
+                        return '.' + ((file.name || '').split('.').pop() || '').toLowerCase() !== type;
+                    } else {
+                        //mime type
+                        return (file.type || '').indexOf(type) === -1;
+                    }
                 });
+            });
 
-                var isError = files.some(function (file) {
-                    return allowedTypes.every(function (type) {
-                        if (type[0] === '.') {
-                            //extension
-                            return '.' + ((file.name || '').split('.').pop() || '').toLowerCase() !== type;
-                        } else {
-                            //mime type
-                            return (file.type || '').indexOf(type) === -1;
-                        }
-                    });
-                });
-
-                if (isError) {
-                    return {
-                        v: 'File must be a %{arg}'
-                    };
-                }
-            }();
-
-            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+            if (isError) {
+                return 'File must be a %{arg}';
+            }
         }
     },
     minFileSize: function minFileSize(files, arg, options) {
@@ -549,6 +543,7 @@ var util = {
     isObject: isObject,
     isPlainObject: isPlainObject,
     isDefined: isDefined,
+    isUndefinedOrNull: isUndefinedOrNull,
     isEmpty: isEmpty,
     exists: exists,
     contains: contains,
@@ -601,9 +596,12 @@ function isPlainObject(value) {
     return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object' && value !== null && !isArray(value) && !(value instanceof RegExp) && !(value instanceof Date) && !(value instanceof Error) && !(value instanceof Number) && !(value instanceof String) && !(value instanceof Boolean) && (typeof value.toDateTime !== 'function' || value.propertyIsEnumerable('toDateTime')); //Moment.js date
 }
 
-// Returns false if the object is `null` of `undefined`
 function isDefined(obj) {
-    return obj != null;
+    return obj !== undefined;
+}
+
+function isUndefinedOrNull(obj) {
+    return obj == null;
 }
 
 //Note! undefined is not empty
@@ -641,7 +639,7 @@ function exists(value) {
 function contains(collection, value, some) {
     some = some ? 'some' : 'every';
 
-    if (!isDefined(collection)) {
+    if (isUndefinedOrNull(collection)) {
         return false;
     }
 
@@ -673,7 +671,7 @@ function deepEqual(actual, expected, strict) {
 function objEqual(a, b, strict) {
     var i, key;
 
-    if (!isDefined(a) || !isDefined(b)) {
+    if (isUndefinedOrNull(a) || isUndefinedOrNull(b)) {
         return false;
     }
 
@@ -863,6 +861,7 @@ var EXCEPTION_HANDLER = 'exceptionHandler';
 var ERROR_FORMAT = 'errorFormat';
 var MESSAGE = 'message';
 var SIMPLE_ARGS_FORMAT = 'simpleArgsFormat';
+var ONE_OPTIONS_ARG = 'oneOptionsArg';
 var ARG = 'arg';
 
 /**
@@ -884,7 +883,7 @@ function validatorWrapper(validators, name, validator) {
         var arg = validatorObj[ARG] || validatorAliasObj[ARG] || validators[ARG];
         var isSimpleArgsFormat = validatorObj[SIMPLE_ARGS_FORMAT] || validatorAliasObj[SIMPLE_ARGS_FORMAT] || validators[SIMPLE_ARGS_FORMAT];
 
-        options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
+        options = assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
         if (typeof options.parse === 'function') {
             value = options.parse(value);
@@ -918,7 +917,7 @@ function validatorWrapper(validators, name, validator) {
                         error = message;
                     }
 
-                    var formattedErrorMessage = validators.formatMessage(error, Object.assign({ validator: alias || name, value: value }, errorObj, options));
+                    var formattedErrorMessage = validators.formatMessage(error, assign({ validator: alias || name, value: value }, errorObj, options));
                     var format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
 
                     if (format) {
@@ -927,7 +926,7 @@ function validatorWrapper(validators, name, validator) {
                         }
 
                         if (format.$options) {
-                            format = Object.assign({}, format);
+                            format = assign({}, format);
 
                             Object.keys(options).forEach(function (key) {
                                 if (!MESSAGE_REGEXP.test(key) && typeof options[key] !== 'function') {
@@ -938,12 +937,12 @@ function validatorWrapper(validators, name, validator) {
                         delete format.$options;
 
                         if (format.$origin) {
-                            format = Object.assign({}, format, formattedErrorMessage);
+                            format = assign({}, format, formattedErrorMessage);
                         }
                         delete format.$origin;
 
                         return {
-                            v: validators.formatMessage(format, Object.assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
+                            v: validators.formatMessage(format, assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
                         };
                     }
 
@@ -992,6 +991,22 @@ function isPlainObject(value) {
 }
 
 /**
+ * Extend objects
+ *
+ * @param {Object} first argument
+ * @param {Any} other arguments
+ *
+ * @returns {Object}
+ */
+function assign() {
+    for (var i = 1; i < arguments.length; i++) {
+        for (var k in arguments[i]) {
+            if (arguments[i].hasOwnProperty(k)) arguments[0][k] = arguments[i][k];
+        }
+    }return arguments[0];
+}
+
+/**
  * Validators constructor
  *
  * @param {Object}          [params]
@@ -999,7 +1014,8 @@ function isPlainObject(value) {
  * @param {Function}          [formatStr] - for format message strings with patterns
  * @param {Function}          [resultHandler] - handle result of validation
  * @param {Function|String}   [exceptionHandler] - handle JS exceptions
- * @param {String}            [simpleArgsFormat] - don't map arg to options.arg or vice versa
+ * @param {String}            [simpleArgsFormat] - any non object argument will be transformed to the `{arg: <argument>}`
+ * @param {String}            [oneOptionsArg] - ignore second options argument
  * @param {String}            [arg] - name of compared value
  * @param {Object}            [util] - reserved for validator's libraries helpers
  *
@@ -1012,7 +1028,8 @@ function Validators(params) {
         resultHandler: hiddenPropertySettings,
         exceptionHandler: hiddenPropertySettings,
         arg: hiddenPropertySettings,
-        ignoreOptionsAfterArg: hiddenPropertySettings,
+        simpleArgsFormat: hiddenPropertySettings,
+        oneOptionsArg: hiddenPropertySettings,
         util: hiddenPropertySettings
     });
 
@@ -1029,7 +1046,7 @@ function Validators(params) {
     this.arg = 'arg';
     this.util = {};
 
-    Object.assign(this, params);
+    assign(this, params);
 }
 
 /**
@@ -1055,7 +1072,8 @@ function addValidator(name, validator, params) {
             var arg2 = arguments[2];
             var _this2 = this && this._this || _this;
             var isSimpleArgsFormat = _this2[name][SIMPLE_ARGS_FORMAT] || _this2[SIMPLE_ARGS_FORMAT];
-            var options = !isSimpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
+            var isOneOptionsArg = _this2[name][ONE_OPTIONS_ARG] || _this2[ONE_OPTIONS_ARG];
+            var options = !isOneOptionsArg && isPlainObject(arg2) ? arg2 : {};
 
             if (arg1 != null && typeof arg1 !== 'boolean') {
                 if (isPlainObject(arg1)) {
@@ -1081,7 +1099,7 @@ function addValidator(name, validator, params) {
 
                     case 'object':
                         validator = _this2[base[0]];
-                        options = Object.assign({}, options, base[1]);
+                        options = assign({}, options, base[1]);
                 }
 
                 var error = validator.apply(this, [value, options].concat(args));
@@ -1093,7 +1111,7 @@ function addValidator(name, validator, params) {
         };
     }
 
-    Object.assign(validate, params);
+    assign(validate, params);
 
     validate.curry = function () /*arg, options*/{
         var _arguments = arguments;
