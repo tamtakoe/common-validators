@@ -603,14 +603,7 @@ function isObject(obj) {
 //This is no full plain-object checking, but it is better for validation when you need to know
 //that object is no array or hasn't common type. Generally you prefer to consider instance of custom class as object
 function isPlainObject(value) {
-    return typeof value == 'object' && value !== null && !isArray(value)
-        && !(value instanceof RegExp)
-        && !(value instanceof Date)
-        && !(value instanceof Error)
-        && !(value instanceof Number)
-        && !(value instanceof String)
-        && !(value instanceof Boolean)
-        && (typeof value.toDateTime !== 'function' || value.propertyIsEnumerable('toDateTime')); //Moment.js date
+    return value && value.constructor === Object;
 }
 
 function isDefined(obj) {
