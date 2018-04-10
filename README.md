@@ -29,11 +29,11 @@ validators.maxLength('abc', 2); //or validators.maxLength('abc', {arg: 2})
 }
 */
 
-validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'is too many'});
+validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', moreMessage: 'is too many'});
 /* returns (except options which end in `Message`):
 {
     message: 'is too many',
-    error: 'range.many',
+    error: 'range.more',
     from: 1,
     to: 5
 }
@@ -164,11 +164,13 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **range** - value is in the range from minimum to maximum
-  * from (`Number`) - minimum. Error: `range.many`
+  * from (`Number`) - minimum. Error: `range.more`
   * to (`Number`) - maximum. Error: `range.less`
   * exclusive (`Boolean`) - doesn't include from and to. `false` by default
   * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
   * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
+  * lessMessage - Error message if less
+  * moreMessage - Error message if more
 
 - **equal** - see Equality section above
 
@@ -189,8 +191,10 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * arg (`Number`) - minimum
 
 - **rangeLength** - value's length is in the range from minimum to maximum (including)
-  * from (`Number`) - minimum. Error: `rangeLength.many`
+  * from (`Number`) - minimum. Error: `rangeLength.more`
   * to (`Number`) - maximum. Error: `rangeLength.less`
+  * lessMessage - Error message if less
+  * moreMessage - Error message if more
 
 - **equalLength** - value's length is equal to comparable value
   * arg (`Number`) - comparable value
@@ -206,8 +210,10 @@ Also you can use `Object.assign(commonValidators, customValidators)` in other si
   * arg (`Number`) - minimum
 
 - **rangeSize** - value's size is in the range from minimum to maximum (including)
-  * from (`Number`) - minimum. Error: `rangeSize.many`
+  * from (`Number`) - minimum. Error: `rangeSize.more`
   * to (`Number`) - maximum. Error: `rangeSize.less`
+  * lessMessage - Error message if less
+  * moreMessage - Error message if more
 
 - **equalSize** - value's size is equal to comparable value
   * arg (`Number`) - comparable value
@@ -245,11 +251,13 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **rangeDateTime** - value is in the range from minimum to maximum dates (including)
-  * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDateTime.many`
+  * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDateTime.more`
   * to (`Date`, `String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDateTime.less`
   * exclusive (`Boolean`) - doesn't include from and to. `false` by default
   * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
   * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
+  * lessMessage - Error message if less
+  * moreMessage - Error message if more
 
 - **equalDateTime** - value is equal comparable date
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - comparable date
@@ -263,11 +271,13 @@ inclusion({a: 1, b: 2}, {a: 1, b: 2, c: 3}); //valid
   * exclusive (`Boolean`) - doesn't include arg. `false` by default
 
 - **rangeDate** - value is in the range from minimum to maximum dates (including, time is ignored)
-  * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDate.many`
+  * from (`Date`, `String`, `Number`, `Moment` or `Array`) - minimum date. Error: `rangeDate.more`
   * to (`Date`,`String`, `Number`, `Moment` or `Array`) - maximum date. Error: `rangeDate.less`
   * exclusive (`Boolean`) - doesn't include from and to. `false` by default
   * exclusiveFrom (`Boolean`) - doesn't include from. `false` by default
   * exclusiveTo (`Boolean`) - doesn't include to. `false` by default
+  * lessMessage - Error message if less
+  * moreMessage - Error message if more
 
 - **equalDate** - value is equal comparable date (time is ignored)
   * arg (`Date`, `String`, `Number`, `Moment` or `Array`) - comparable date

@@ -114,8 +114,8 @@ var validators = {
                 }
             } else if (!((options.exclusiveTo || options.exclusive) ? toNumber(value) < options.to : toNumber(value) <= options.to)) {
                 return {
-                    error: 'range.many',
-                    message: options.manyMessage || 'Must be from %{from} to %{to}'
+                    error: 'range.more',
+                    message: options.moreMessage || 'Must be from %{from} to %{to}'
                 }
             }
         }
@@ -161,8 +161,8 @@ var validators = {
         if (exists(value)) {
             if (toArray(value).length > options.to) {
                 return {
-                    error: 'rangeLength.many',
-                    message: options.manyMessage || 'Length must be from %{from} to %{to}'
+                    error: 'rangeLength.more',
+                    message: options.moreMessage || 'Length must be from %{from} to %{to}'
                 }
 
             } else if (toArray(value).length < options.from) {
@@ -221,8 +221,8 @@ var validators = {
                 };
             } else if (valueSize > options.to) {
                 return {
-                    error: 'rangeSize.many',
-                    message: options.manyMessage || 'Size must be from %{from} to %{to}',
+                    error: 'rangeSize.more',
+                    message: options.moreMessage || 'Size must be from %{from} to %{to}',
                     size: valueSize
                 };
             }
@@ -290,8 +290,8 @@ var validators = {
         if (exists(value)) {
             if (!((options.exclusiveFrom || options.exclusive) ? toDateTime(value) > toDateTime(options.from) : toDateTime(value) >= toDateTime(options.from))) {
                 return {
-                    error: 'rangeDateTime.many',
-                    message: options.manyMessage || 'Must be from %{from} to %{to}'
+                    error: 'rangeDateTime.more',
+                    message: options.moreMessage || 'Must be from %{from} to %{to}'
                 }
 
             } else if (!((options.exclusiveTo || options.exclusive) ? toDateTime(value) < toDateTime(options.to) : toDateTime(value) <= toDateTime(options.to))) {
@@ -307,8 +307,8 @@ var validators = {
         if (exists(value)) {
             if (!((options.exclusiveFrom || options.exclusive) ? toDate(value) > toDate(options.from) : toDate(value) >= toDate(options.from))) {
                 return {
-                    error: 'rangeDate.many',
-                    message: options.manyMessage || 'Must be from %{from} to %{to}'
+                    error: 'rangeDate.more',
+                    message: options.moreMessage || 'Must be from %{from} to %{to}'
                 }
 
             } else if (!((options.exclusiveTo || options.exclusive) ? toDate(value) < toDate(options.to) : toDate(value) <= toDate(options.to))) {
